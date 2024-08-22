@@ -3,12 +3,11 @@ package com.architecture.archi.content.user.controller;
 import com.architecture.archi.common.model.ApiResponseModel;
 import com.architecture.archi.content.user.model.UserModel;
 import com.architecture.archi.content.user.service.UserWriteService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @Slf4j
 @RestController

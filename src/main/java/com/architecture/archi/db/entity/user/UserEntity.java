@@ -1,6 +1,7 @@
 package com.architecture.archi.db.entity.user;
 
 import com.architecture.archi.common.BooleanFlag;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,8 +12,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 
 @Getter
