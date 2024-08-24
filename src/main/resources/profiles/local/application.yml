@@ -36,21 +36,22 @@ spring:
     port: 6379
     host: localhost
 
-#  archi:
-#    datasource:
-#      driver-class-name: com.mysql.cj.jdbc.Driver
-#      url: jdbc:mysql://127.0.0.1:3306/archi?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
-#      username: root
-#      password: 1234
-#      hikari:
-#        connectionTimeout: 3000
-#        maximumPoolSize: 30
-#        maxLifetime: 1800000
-#        poolName: HikariCP
-#        readOnly: false
-#        connectionTestQuery: SELECT 1
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    url: jdbc:mysql://localhost:3306/archi?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
+    user: root
+    password: 1234
+
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/archi
-    username: root
-    password: your_password
     driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/archi?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
+    username: root
+    password: 1234
+    hikari:
+      connectionTimeout: 3000
+      maximumPoolSize: 30
+      maxLifetime: 1800000
+      poolName: HikariCP
+      readOnly: false
+      connectionTestQuery: SELECT 1

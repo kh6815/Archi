@@ -6,8 +6,8 @@ spring:
 
   # jpa
   jpa:
-    open-in-view: false # ? ???? ???? ???? ?? ??, ??? ??? ?? ??? ?? false ??
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: false # View단에서도 DB을 연결 해서 지연로딩이 가능하게 함.
+    database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl

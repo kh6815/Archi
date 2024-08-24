@@ -33,7 +33,7 @@ public class ApiResponseModel<T> {
         header.setResultMessage(resultMessage);
     }
 
-    public void putErrorData(Object errorData) {
+    public void putError(Object errorData) {
         this.errorData = errorData;
     }
 }
