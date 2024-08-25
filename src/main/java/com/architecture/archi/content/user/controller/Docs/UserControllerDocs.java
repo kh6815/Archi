@@ -18,12 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Tag(name = "유저 API", description = "유저 관련 컨트롤러입니다.")
 public interface UserControllerDocs {
     @Operation(summary = "회원가입", description = "유저 회원가입 API 입니다")
-//    @Parameters(value = {
-//            @Parameter(name = "id", description = "회원가입할 유저 id", required = true),
-//            @Parameter(name = "pw", description = "회원가입할 유저 pw", required = true),
-//            @Parameter(name = "email", description = "회원가입할 유저 email", required = true),
-//            @Parameter(name = "nickName", description = "회원가입할 유저 nickName", required = true),
-//    })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "회원가입 완료", content = @Content(schema = @Schema(implementation = UserModel.UserSignUpRes.class)))
     })
@@ -46,4 +40,10 @@ public interface UserControllerDocs {
             @ApiResponse(responseCode = "201", description = "체크 결과", content = @Content(schema = @Schema(implementation = Boolean.class)))
     })
     public ApiResponseModel<Boolean> checkNickName(@RequestParam("nickName") String nickName) throws CustomException;
+
+    @Operation(summary = "비밀번호 초기화", description = "유저 비밀번호 초기화 API 입니다")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "비밀번호 초기화 완료", content = @Content(schema = @Schema(implementation = UserModel.InitPasswordRes.class)))
+    })
+    public ApiResponseModel<UserModel.InitPasswordRes> initPassword(@RequestBody UserModel.InitPasswordReq initPasswordReq) throws CustomException;
 }

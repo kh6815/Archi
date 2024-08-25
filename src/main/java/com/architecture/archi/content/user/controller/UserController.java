@@ -24,6 +24,7 @@ public class UserController implements UserControllerDocs {
    private final UserWriteService userWriteService;
    private final UserReadService userReadService;
 
+   // 회원가입
    @PostMapping("/signup")
    public ApiResponseModel<UserModel.UserSignUpRes> userSingUp(@Valid @RequestBody UserModel.UserSignUpReq userSignUpReq) throws CustomException {
        return new ApiResponseModel<>(UserModel.UserSignUpRes.builder()
@@ -31,6 +32,7 @@ public class UserController implements UserControllerDocs {
                .build());
    }
 
+   // 아이디 체크
    @GetMapping("/check-id")
    public ApiResponseModel<Boolean> checkId(
            @NotBlank(message = "필수값입니다.")
@@ -40,6 +42,7 @@ public class UserController implements UserControllerDocs {
        return new ApiResponseModel<>(userReadService.existCheckId(id));
    }
 
+   // 닉네임 체크
     @GetMapping("/check-nickname")
     public ApiResponseModel<Boolean> checkNickName(
             @NotBlank(message = "필수값입니다.")
@@ -48,4 +51,13 @@ public class UserController implements UserControllerDocs {
     ) throws CustomException {
         return new ApiResponseModel<>(userReadService.existCheckNickName(nickName));
     }
+
+    // 비밀번호 초기화
+    @PatchMapping("/init-password")
+    public ApiResponseModel<UserModel.InitPasswordRes> initPassword(@RequestBody UserModel.InitPasswordReq initPasswordReq) throws CustomException {
+        return new ApiResponseModel<>(userWriteService.initPassword(initPasswordReq.getId()));
+    }
+
+    //TODO 권한 부여 하고 서비스 로직 진행
+    // 비밀번호 변경(현재 비밀번호, 바꿀 비밀번호, 확인 비밀번호)
 }

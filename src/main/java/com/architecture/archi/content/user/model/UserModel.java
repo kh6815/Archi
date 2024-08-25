@@ -66,6 +66,11 @@ public class UserModel {
         private String nickName;
     }
 
+    @Getter
+    public static class InitPasswordReq{
+        private String id;
+    }
+
 
 
     /*
@@ -80,6 +85,20 @@ public class UserModel {
         @Builder
         public UserSignUpRes(String id) {
             this.id = id;
+        }
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class InitPasswordRes{
+        private String message;
+        private Boolean isSuccess;
+
+        @Builder
+        public InitPasswordRes(String message, Boolean isSuccess) {
+            this.message = message;
+            this.isSuccess = isSuccess;
         }
     }
 }

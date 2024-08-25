@@ -60,4 +60,8 @@ public class UserEntity {
         this.email = email;
         this.nickName = nickName;
     }
+
+    public void changePassword(String newPassword){
+        this.pw = newPassword;
+    }
 }
