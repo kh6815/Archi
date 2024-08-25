@@ -1,5 +1,7 @@
 package com.architecture.archi.content.user.service;
 
+import com.architecture.archi.common.error.CustomException;
+import com.architecture.archi.common.error.ExceptionCode;
 import com.architecture.archi.content.user.model.UserModel;
 import com.architecture.archi.db.entity.user.UserEntity;
 import com.architecture.archi.db.repository.user.UserRepository;
@@ -18,8 +20,21 @@ public class UserWriteService {
 
     //@Transactional 기본적으로 error에 대해서만 롤백을 진행하고, Exception은 따로 옵션으로 설정해야한다.
     @Transactional(rollbackFor = Exception.class)
-    public String createUser(UserModel.UserSignUpReq userSignUpReq) {
-        //TODO 등록전 id, nickname 중복 확인 필요
+    public String createUser(UserModel.UserSignUpReq userSignUpReq) throws CustomException {
+        // ID 중복 확인
+        if(userRepository.existsById(userSignUpReq.getId())){
+            throw new CustomException(ExceptionCode.ALREADY_EXIST, "이미 존재하는 아이디 입니다.");
+        }
+
+        // pw, pwCheck 비교
+        if(!userSignUpReq.getPw().equals(userSignUpReq.getPwCheck())){
+            throw new CustomException(ExceptionCode.BAD_REQUEST, "두 패스워드가 다릅니다.");
+        }
+
+        // nickName 중복확인
+        if(userRepository.existsByNickName(userSignUpReq.getNickName())){
+            throw new CustomException(ExceptionCode.ALREADY_EXIST, "이미 존재하는 닉네임 입니다.");
+        }
 
         UserEntity userEntity = UserEntity.builder()
                 .id(userSignUpReq.getId())
