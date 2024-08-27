@@ -58,7 +58,6 @@ public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilte
 
             // blackList 명단에 있는 토큰인지 확인
             if (!accessTokenBlackListTemplate.hasKey(token)) {
-                System.out.println(token);
                 //JWT 유효성 검증
                 if (jwtUtils.validateToken(token)) {
                     String userId = jwtUtils.getUserIdFromToken(token);
