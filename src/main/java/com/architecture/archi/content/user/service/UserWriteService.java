@@ -142,4 +142,20 @@ public class UserWriteService {
 
         return true;
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean changeNickName(UserModel.ChangeNickNameReq changeNickNameReq, CustomUserDetails userDetails) throws CustomException {
+
+        if(userRepository.existsByNickName(changeNickNameReq.getNewNickName())){
+            throw new CustomException(ExceptionCode.ALREADY_EXIST, "이미 존재하는 닉네임 입니다.");
+        }
+
+        // userDetails에서 가져온 userEntity는 영속성이 없기 때문에 다시 조회
+        UserEntity user = userRepository.findById(userDetails.getUser().getId())
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "존재하지 않는 유저"));
+
+        user.changeNickName(changeNickNameReq.getNewNickName());
+
+        return true;
+    }
 }

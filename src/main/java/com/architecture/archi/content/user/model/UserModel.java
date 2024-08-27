@@ -81,6 +81,13 @@ public class UserModel {
         private String newPassword;
     }
 
+    @Getter
+    public static class ChangeNickNameReq{
+        @NotBlank(message = "필수값입니다.")
+        @Size(min = 2, max = 10, message = "2글자이상 10글자이하입니다.")
+        private String newNickName;
+    }
+
 
 
     /*

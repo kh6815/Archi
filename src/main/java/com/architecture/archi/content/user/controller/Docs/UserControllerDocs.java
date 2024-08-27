@@ -54,4 +54,10 @@ public interface UserControllerDocs {
             @ApiResponse(responseCode = "201", description = "비밀번호 변경 완료", content = @Content(schema = @Schema(implementation = UserModel.ChangePasswordReq.class)))
     })
     public ApiResponseModel<Boolean> changePassword(@RequestBody UserModel.ChangePasswordReq changePasswordReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
+
+    @Operation(summary = "닉네임 변경", description = "유저 닉네임 변경 API 입니다")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "닉네임 변경 완료", content = @Content(schema = @Schema(implementation = UserModel.ChangeNickNameReq.class)))
+    })
+    public ApiResponseModel<Boolean> changeNickName(@RequestBody UserModel.ChangeNickNameReq changeNickNameReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
 }

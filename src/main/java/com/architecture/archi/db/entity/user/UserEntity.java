@@ -69,4 +69,7 @@ public class UserEntity {
     public void changePassword(String newPassword){
         this.pw = newPassword;
     }
+    public void changeNickName(String newNickName) {
+        this.nickName = newNickName;
+    }
 }

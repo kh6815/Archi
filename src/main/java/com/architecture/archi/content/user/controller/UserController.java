@@ -45,7 +45,7 @@ public class UserController implements UserControllerDocs {
        return new ApiResponseModel<>(userReadService.existCheckId(id));
    }
 
-   // 닉네임 체크
+    // 닉네임 체크
     @GetMapping("/check-nickname")
     public ApiResponseModel<Boolean> checkNickName(
             @NotBlank(message = "필수값입니다.")
@@ -66,5 +66,12 @@ public class UserController implements UserControllerDocs {
     @PatchMapping("/change-password")
     public ApiResponseModel<Boolean> changePassword(@RequestBody UserModel.ChangePasswordReq changePasswordReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
         return new ApiResponseModel<>(userWriteService.changePassword(changePasswordReq, userDetails));
+    }
+
+    // 닉네임 변경
+    @PreAuthorize("hasRole('USER')")
+    @PatchMapping("/change-nickname")
+    public ApiResponseModel<Boolean> changeNickName(@RequestBody UserModel.ChangeNickNameReq changeNickNameReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
+       return new ApiResponseModel<>(userWriteService.changeNickName(changeNickNameReq, userDetails));
     }
 }
