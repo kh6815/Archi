@@ -2,6 +2,7 @@ package com.architecture.archi.content.user.controller;
 
 import com.architecture.archi.common.error.CustomException;
 import com.architecture.archi.common.model.ApiResponseModel;
+import com.architecture.archi.config.security.user.CustomUserDetails;
 import com.architecture.archi.content.user.controller.Docs.UserControllerDocs;
 import com.architecture.archi.content.user.model.UserModel;
 import com.architecture.archi.content.user.service.UserReadService;
@@ -12,6 +13,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,6 +61,10 @@ public class UserController implements UserControllerDocs {
         return new ApiResponseModel<>(userWriteService.initPassword(initPasswordReq.getId()));
     }
 
-    //TODO 권한 부여 하고 서비스 로직 진행
     // 비밀번호 변경(현재 비밀번호, 바꿀 비밀번호, 확인 비밀번호)
+    @PreAuthorize("hasRole('USER')")
+    @PatchMapping("/change-password")
+    public ApiResponseModel<Boolean> changePassword(@RequestBody UserModel.ChangePasswordReq changePasswordReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
+        return new ApiResponseModel<>(userWriteService.changePassword(changePasswordReq, userDetails));
+    }
 }

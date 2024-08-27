@@ -2,6 +2,7 @@ package com.architecture.archi.content.user.controller.Docs;
 
 import com.architecture.archi.common.error.CustomException;
 import com.architecture.archi.common.model.ApiResponseModel;
+import com.architecture.archi.config.security.user.CustomUserDetails;
 import com.architecture.archi.content.user.model.UserModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -46,4 +48,10 @@ public interface UserControllerDocs {
             @ApiResponse(responseCode = "201", description = "비밀번호 초기화 완료", content = @Content(schema = @Schema(implementation = UserModel.InitPasswordRes.class)))
     })
     public ApiResponseModel<UserModel.InitPasswordRes> initPassword(@RequestBody UserModel.InitPasswordReq initPasswordReq) throws CustomException;
+
+    @Operation(summary = "비밀번호 변경", description = "유저 비밀번호 변경 API 입니다")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "비밀번호 변경 완료", content = @Content(schema = @Schema(implementation = UserModel.ChangePasswordReq.class)))
+    })
+    public ApiResponseModel<Boolean> changePassword(@RequestBody UserModel.ChangePasswordReq changePasswordReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
 }

@@ -36,4 +36,11 @@ spring:
 #          starttls:
 #            enable: true
 
+# JWT
+jwt:
+  secret: archijwtservice
+  # (초단위 - 1시간) 3600초
+  access: 3600
+  # (초단위 - 한달) 3600초(1시간) * 24 * 30
+  refresh: 2592000
 

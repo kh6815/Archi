@@ -1,6 +1,6 @@
 package com.architecture.archi.db.entity.content;
 
-import com.architecture.archi.common.BooleanFlag;
+import com.architecture.archi.common.enumobj.BooleanFlag;
 import com.architecture.archi.db.entity.category.CategoryEntity;
 import com.architecture.archi.db.entity.user.UserEntity;
 import jakarta.persistence.*;

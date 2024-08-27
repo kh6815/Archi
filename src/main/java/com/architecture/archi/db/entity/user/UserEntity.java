@@ -1,6 +1,7 @@
 package com.architecture.archi.db.entity.user;
 
-import com.architecture.archi.common.BooleanFlag;
+import com.architecture.archi.common.enumobj.BooleanFlag;
+import com.architecture.archi.common.enumobj.RoleType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,11 +34,15 @@ public class UserEntity {
     @NotNull
     private String pw;
 
-    @Column(name = "EMAIL")
+    @Column(name = "EMAIL", unique = true)
     private String email;
 
     @Column(name = "NICK_NAME", unique = true)
     private String nickName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ROLE", nullable = false)
+    private RoleType role;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "DEL_YN", columnDefinition = "enum('Y', 'N') default 'N'", nullable = false)

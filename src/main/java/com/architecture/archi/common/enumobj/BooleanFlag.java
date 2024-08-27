@@ -1,4 +1,4 @@
-package com.architecture.archi.common;
+package com.architecture.archi.common.enumobj;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

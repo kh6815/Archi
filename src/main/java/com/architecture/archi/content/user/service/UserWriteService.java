@@ -1,14 +1,19 @@
 package com.architecture.archi.content.user.service;
 
+import com.architecture.archi.common.EncryptUtil;
 import com.architecture.archi.common.email.CommonEmail;
 import com.architecture.archi.common.email.model.EmailMessage;
 import com.architecture.archi.common.error.CustomException;
 import com.architecture.archi.common.error.ExceptionCode;
+import com.architecture.archi.config.security.user.CustomUserDetails;
 import com.architecture.archi.content.user.model.UserModel;
 import com.architecture.archi.db.entity.user.UserEntity;
 import com.architecture.archi.db.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +51,7 @@ public class UserWriteService {
 
         UserEntity userEntity = UserEntity.builder()
                 .id(userSignUpReq.getId())
-                .pw(userSignUpReq.getPw())
+                .pw(EncryptUtil.encryptString(userSignUpReq.getPw()))
                 .email(userSignUpReq.getEmail())
                 .nickName(userSignUpReq.getNickName())
                 .build();
@@ -68,7 +73,7 @@ public class UserWriteService {
                 .build();
 
         if(commonEmail.sendMail(emailMessage)){
-            user.changePassword(randomPassword);
+            user.changePassword(EncryptUtil.encryptString(randomPassword));
 
             return UserModel.InitPasswordRes.builder()
                     .message(commonEmail.maskEmail(user.getEmail()) + "로 초기화된 이메일을 전송하였습니다.")
@@ -117,5 +122,24 @@ public class UserWriteService {
         }
 
         return result.toString();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean changePassword(UserModel.ChangePasswordReq changePasswordReq, CustomUserDetails userDetails) throws CustomException {
+        // userDetails에서 가져온 userEntity는 영속성이 없기 때문에 다시 user를 조회해 온다.
+        UserEntity user = userRepository.findById(userDetails.getUser().getId())
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "존재하지 않는 유저"));
+
+        if(!user.getPw().equals(EncryptUtil.encryptString(changePasswordReq.getBeforePassword()))){
+            throw new CustomException(ExceptionCode.BAD_PW_REQUEST, "현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        if(!changePasswordReq.getNewPassword().equals(changePasswordReq.getCheckPassword())){
+            throw new CustomException(ExceptionCode.BAD_REQUEST, "두 비밀번호가 일치하지 않습니다.");
+        }
+
+        user.changePassword(EncryptUtil.encryptString(changePasswordReq.getNewPassword()));
+
+        return true;
     }
 }
