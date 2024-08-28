@@ -4,7 +4,7 @@ import com.architecture.archi.common.EncryptUtil;
 import com.architecture.archi.common.error.CustomException;
 import com.architecture.archi.common.error.ExceptionCode;
 import com.architecture.archi.common.model.ApiResponseModel;
-import com.architecture.archi.config.JwtUtils;
+import com.architecture.archi.config.security.JwtUtils;
 import com.architecture.archi.content.auth.model.AuthModel;
 import com.architecture.archi.db.entity.auth.TokenPairEntity;
 import com.architecture.archi.db.entity.user.UserEntity;

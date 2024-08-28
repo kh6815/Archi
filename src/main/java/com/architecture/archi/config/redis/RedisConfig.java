@@ -31,7 +31,7 @@ public class RedisConfig {
     }
 
     @Bean
-    public LettuceConnectionFactory springSessionRedisFactory() {
+    public LettuceConnectionFactory springRedisFactory() {
         return redisConnectionFactory(0);
     }
 
@@ -48,7 +48,7 @@ public class RedisConfig {
     @Bean(name = "redisTemplate")
     public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(springSessionRedisFactory());
+        template.setConnectionFactory(springRedisFactory());
         template.setKeySerializer(new StringRedisSerializer());
 
         // GenericJackson2JsonRedisSerializer 사용

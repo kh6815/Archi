@@ -1,4 +1,4 @@
-package com.architecture.archi.content.user.controller.Docs;
+package com.architecture.archi.content.user.controller.docs;
 
 import com.architecture.archi.common.error.CustomException;
 import com.architecture.archi.common.model.ApiResponseModel;

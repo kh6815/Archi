@@ -1,4 +1,4 @@
-package com.architecture.archi.config;
+package com.architecture.archi.config.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

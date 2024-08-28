@@ -1,6 +1,5 @@
 package com.architecture.archi.config.security;
 
-import com.architecture.archi.config.JwtUtils;
 import com.architecture.archi.config.security.error.CustomAccessDeniedHandler;
 import com.architecture.archi.config.security.error.CustomAuthenticationEntryPoint;
 import com.architecture.archi.config.security.filter.JwtAuthFilter;

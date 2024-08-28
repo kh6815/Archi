@@ -3,11 +3,10 @@ package com.architecture.archi.content.user.controller;
 import com.architecture.archi.common.error.CustomException;
 import com.architecture.archi.common.model.ApiResponseModel;
 import com.architecture.archi.config.security.user.CustomUserDetails;
-import com.architecture.archi.content.user.controller.Docs.UserControllerDocs;
+import com.architecture.archi.content.user.controller.docs.UserControllerDocs;
 import com.architecture.archi.content.user.model.UserModel;
 import com.architecture.archi.content.user.service.UserReadService;
 import com.architecture.archi.content.user.service.UserWriteService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -15,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -64,14 +62,14 @@ public class UserController implements UserControllerDocs {
     // 비밀번호 변경(현재 비밀번호, 바꿀 비밀번호, 확인 비밀번호)
     @PreAuthorize("hasRole('USER')")
     @PatchMapping("/change-password")
-    public ApiResponseModel<Boolean> changePassword(@RequestBody UserModel.ChangePasswordReq changePasswordReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
+    public ApiResponseModel<Boolean> changePassword(@Valid @RequestBody UserModel.ChangePasswordReq changePasswordReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
         return new ApiResponseModel<>(userWriteService.changePassword(changePasswordReq, userDetails));
     }
 
     // 닉네임 변경
     @PreAuthorize("hasRole('USER')")
     @PatchMapping("/change-nickname")
-    public ApiResponseModel<Boolean> changeNickName(@RequestBody UserModel.ChangeNickNameReq changeNickNameReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
+    public ApiResponseModel<Boolean> changeNickName(@Valid @RequestBody UserModel.ChangeNickNameReq changeNickNameReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
        return new ApiResponseModel<>(userWriteService.changeNickName(changeNickNameReq, userDetails));
     }
 }

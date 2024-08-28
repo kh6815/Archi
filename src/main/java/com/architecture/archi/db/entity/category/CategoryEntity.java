@@ -1,13 +1,19 @@
 package com.architecture.archi.db.entity.category;
 
+import com.architecture.archi.common.enumobj.BooleanFlag;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,4 +39,41 @@ public class CategoryEntity {
     @Column(name = "CATEGORY_NAME")
     @NotNull
     private String categoryName;
+
+    @Column(name = "CREATE_USER")
+    @NotNull
+    private String createUser;
+
+    @Column(name = "UPDATE_USER")
+    private String updateUser;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ACTIVE_YN", columnDefinition = "enum('Y', 'N') default 'Y'", nullable = false)
+    private BooleanFlag activeYn;
+
+    @Column(name = "CREATED_AT", columnDefinition = "datetime default CURRENT_TIMESTAMP", updatable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @Column(name = "UPDATED_AT")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
+    @Builder
+    public CategoryEntity(CategoryEntity parentsCategory, String categoryName, String createUser){
+        this.parentsCategory = parentsCategory;
+        this.categoryName = categoryName;
+        this.createUser = createUser;
+    }
+
+    public void updateCategoryName(String categoryName, String updateUser) {
+        this.categoryName = categoryName;
+        this.updateUser = updateUser;
+    }
+    public void updateActive(BooleanFlag activeYn, String updateUser){
+        this.activeYn = activeYn;
+        this.updateUser = updateUser;
+    }
 }
