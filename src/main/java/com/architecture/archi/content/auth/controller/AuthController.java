@@ -2,9 +2,9 @@ package com.architecture.archi.content.auth.controller;
 
 import com.architecture.archi.common.error.CustomException;
 import com.architecture.archi.common.model.ApiResponseModel;
+import com.architecture.archi.content.auth.controller.docs.AuthControllerDocs;
 import com.architecture.archi.content.auth.model.AuthModel;
 import com.architecture.archi.content.auth.service.AuthService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
