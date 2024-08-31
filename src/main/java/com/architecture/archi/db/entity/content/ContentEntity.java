@@ -2,9 +2,11 @@ package com.architecture.archi.db.entity.content;
 
 import com.architecture.archi.common.enumobj.BooleanFlag;
 import com.architecture.archi.db.entity.category.CategoryEntity;
+import com.architecture.archi.db.entity.like.ContentLikeEntity;
 import com.architecture.archi.db.entity.user.UserEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -16,6 +18,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @EntityListeners(AuditingEntityListener.class) // 엔티티의 변경을 자동 감지, AuditingEntityListener -> 생성, 변경 날짜를 자동 세팅(@CreatedDate, @LastModifiedDate)
@@ -44,13 +48,12 @@ public class ContentEntity {
     @NotNull
     private String title;
 
-    @Column(name = "CONTENT")
+    @Column(name = "CONTENT", columnDefinition = "TEXT")
     @NotNull
     private String content;
 
-    @Column(name = "LIKE")
-    @ColumnDefault("0")
-    private Integer like;
+    @OneToMany(mappedBy = "content", fetch=FetchType.LAZY)
+    private List<ContentLikeEntity> contentLikes = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "DEL_YN", columnDefinition = "enum('Y', 'N') default 'N'", nullable = false)
@@ -65,4 +68,22 @@ public class ContentEntity {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    @Builder
+    public ContentEntity(UserEntity user, CategoryEntity category, String title, String content){
+        this.user = user;
+        this.category = category;
+        this.title = title;
+        this.content = content;
+    }
+
+    public void updateContent(String newTitle, String newContent, CategoryEntity newCategory){
+        this.title = newTitle;
+        this.content = newContent;
+        this.category = newCategory;
+    }
+
+    public void deleteContent(){
+        this.delYn = BooleanFlag.Y;
+    }
 }

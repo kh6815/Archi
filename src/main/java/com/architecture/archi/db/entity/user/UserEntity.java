@@ -40,6 +40,8 @@ public class UserEntity {
     @Column(name = "NICK_NAME", unique = true)
     private String nickName;
 
+    //TODO 프로필 이미지 삽입 -> S3
+
     @Enumerated(EnumType.STRING)
     @Column(name = "ROLE", nullable = false)
     private RoleType role;

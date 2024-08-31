@@ -12,7 +12,7 @@ public class StorageUtils {
      * @return
      * @throws Exception
      */
-    public static String createStoragePath(String fileName, String uploadFolder) throws Exception {
+    public static String createStoragePath(String fileName, String uploadFolder) {
 
         String uploadFileExtension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
 
