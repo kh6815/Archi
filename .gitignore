@@ -39,5 +39,3 @@ out/
 ### file ###
 *.yml
 application.properties
-
-.sql
