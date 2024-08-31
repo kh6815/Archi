@@ -39,8 +39,6 @@ public class ContentController implements ContentControllerDocs {
         return new ApiResponseModel<>(contentReadService.findContent(id, userDetails));
     }
 
-    //TODO admin에서 쓸 content 검색과 검색 필터를 만들기(유저 id, 제목, 등등)
-
     // like 로직 만들기 -> 누른 사람을 user데이터로 가지고 있어야 하나?, 조회 할때나 삭제할때 like 필드 같이 지우기
     @PostMapping("/like")
     public ApiResponseModel<Boolean> clickLike(@RequestBody ContentModel.UpdateLikeReq updateLikeReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
@@ -65,4 +63,6 @@ public class ContentController implements ContentControllerDocs {
     public ApiResponseModel<Boolean> deleteContent(@RequestBody ContentModel.DeleteContentReq deleteContentReq) throws CustomException {
         return new ApiResponseModel<>(contentWriteService.deleteContent(deleteContentReq));
     }
+
+    //TODO admin에서 쓸 content 검색과 검색 필터를 만들기(유저 id, 제목, 등등)
 }

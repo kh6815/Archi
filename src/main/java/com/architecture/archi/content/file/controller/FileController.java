@@ -3,6 +3,7 @@ package com.architecture.archi.content.file.controller;
 import com.architecture.archi.common.error.CustomException;
 import com.architecture.archi.common.model.ApiResponseModel;
 import com.architecture.archi.config.security.user.CustomUserDetails;
+import com.architecture.archi.content.file.controller.docs.FileControllerDocs;
 import com.architecture.archi.content.file.model.FileModel;
 import com.architecture.archi.content.file.service.FileService;
 import jakarta.validation.Valid;
@@ -17,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/file")
-public class FileController {
+public class FileController implements FileControllerDocs {
 
     private final FileService fileService;
 
