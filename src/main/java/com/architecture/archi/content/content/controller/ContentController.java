@@ -39,14 +39,7 @@ public class ContentController implements ContentControllerDocs {
         return new ApiResponseModel<>(contentReadService.findContent(id, userDetails));
     }
 
-    // like 로직 만들기 -> 누른 사람을 user데이터로 가지고 있어야 하나?, 조회 할때나 삭제할때 like 필드 같이 지우기
-    @PostMapping("/like")
-    public ApiResponseModel<Boolean> clickLike(@RequestBody ContentModel.UpdateLikeReq updateLikeReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
-        return new ApiResponseModel<>(contentWriteService.updateLike(updateLikeReq, userDetails));
-    }
-
     // 등록
-    // 카테고리 등록
     @PostMapping("/add")
     public ApiResponseModel<Long> addContent(@Valid @RequestBody ContentModel.AddContentReq addContentReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
         return new ApiResponseModel<>(contentWriteService.createContent(addContentReq, userDetails));
@@ -62,6 +55,12 @@ public class ContentController implements ContentControllerDocs {
     @DeleteMapping("/delete")
     public ApiResponseModel<Boolean> deleteContent(@RequestBody ContentModel.DeleteContentReq deleteContentReq) throws CustomException {
         return new ApiResponseModel<>(contentWriteService.deleteContent(deleteContentReq));
+    }
+
+    // like 로직 만들기 -> 조회 할때나 삭제할때 like 필드 같이 지우기
+    @PostMapping("/like")
+    public ApiResponseModel<Boolean> clickLike(@RequestBody ContentModel.UpdateContentLikeReq updateContentLikeReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
+        return new ApiResponseModel<>(contentWriteService.updateLike(updateContentLikeReq, userDetails));
     }
 
     //TODO admin에서 쓸 content 검색과 검색 필터를 만들기(유저 id, 제목, 등등)

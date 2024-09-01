@@ -46,7 +46,7 @@ public class ContentModel {
     }
 
     @Getter
-    public static class UpdateLikeReq{
+    public static class UpdateContentLikeReq{
         private Long contentId;
     }
 

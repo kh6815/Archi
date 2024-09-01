@@ -165,13 +165,13 @@ public class ContentWriteService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Boolean updateLike(ContentModel.UpdateLikeReq updateLikeReq, CustomUserDetails userDetails) throws CustomException {
-        Optional<ContentLikeEntity> likeEntityOptional = contentLikeRepository.findByUser_IdAndContent_Id(userDetails.getUsername(), updateLikeReq.getContentId());
+    public Boolean updateLike(ContentModel.UpdateContentLikeReq updateContentLikeReq, CustomUserDetails userDetails) throws CustomException {
+        Optional<ContentLikeEntity> likeEntityOptional = contentLikeRepository.findByUser_IdAndContent_Id(userDetails.getUsername(), updateContentLikeReq.getContentId());
 
         if(likeEntityOptional.isPresent()){
             contentLikeRepository.delete(likeEntityOptional.get());
         } else {
-            ContentEntity contentEntity = contentDao.findContent(updateLikeReq.getContentId());
+            ContentEntity contentEntity = contentDao.findSimpleContent(updateContentLikeReq.getContentId());
 
             ContentLikeEntity contentLikeEntity = ContentLikeEntity.builder()
                     .user(userDetails.getUser())

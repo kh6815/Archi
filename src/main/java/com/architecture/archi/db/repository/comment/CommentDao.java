@@ -1,0 +1,129 @@
+package com.architecture.archi.db.repository.comment;
+
+import com.architecture.archi.common.enumobj.BooleanFlag;
+import com.architecture.archi.common.error.CustomException;
+import com.architecture.archi.common.error.ExceptionCode;
+import com.architecture.archi.content.comment.model.CommentModel;
+import com.architecture.archi.content.content.model.ContentModel;
+import com.architecture.archi.db.entity.comment.CommentEntity;
+import com.architecture.archi.db.entity.comment.QCommentEntity;
+import com.architecture.archi.db.entity.content.ContentEntity;
+import com.architecture.archi.db.entity.like.QCommentLikeEntity;
+import com.architecture.archi.db.entity.user.QUserEntity;
+import com.querydsl.core.group.GroupBy;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import javax.xml.stream.events.Comment;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.querydsl.core.group.GroupBy.groupBy;
+
+@RequiredArgsConstructor
+@Repository
+public class CommentDao {
+
+    private final JPAQueryFactory jpaQueryFactory;
+
+    private final QUserEntity qUserEntity = QUserEntity.userEntity;
+    private final QCommentEntity qCommentEntity = QCommentEntity.commentEntity;
+
+    private final QCommentLikeEntity qCommentLikeEntity = QCommentLikeEntity.commentLikeEntity;
+
+    public CommentEntity findComment(Long id) throws CustomException {
+        return Optional.ofNullable(
+                        jpaQueryFactory
+                                .selectFrom(qCommentEntity)
+                                .leftJoin(qCommentEntity.user, qUserEntity).fetchJoin()
+                                .where(qCommentEntity.id.eq(id))
+                                .fetchOne()
+
+                )
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, String.format("Comment [%s] is null", id)));
+    }
+
+    public List<CommentModel.CommentDto> findCommentsByContent(Long contentId, String userId) {
+        QCommentEntity qCommentEntity = QCommentEntity.commentEntity;
+        QCommentEntity qChildCommentEntity = new QCommentEntity("childComment");
+
+        List<CommentEntity> parentCommentEntityList = jpaQueryFactory
+                .selectFrom(qCommentEntity)
+                .leftJoin(qCommentEntity.user, qUserEntity).fetchJoin()
+                .leftJoin(qCommentEntity.commentLikes, qCommentLikeEntity).fetchJoin()
+                .where(qCommentEntity.content.id.eq(contentId)
+                        .and(qCommentEntity.parent.isNull()) // 부모 댓글만 조회 // 삭제되지 않은 댓글만 조회
+                )
+                .orderBy(qCommentEntity.createdAt.asc())
+                .fetch();
+
+        List<CommentModel.CommentDto> parentComments = new ArrayList<>();
+        // 부모 댓글 ID 리스트 생성
+        List<Long> parentCommentIds = new ArrayList<>();
+        for (CommentEntity commentEntity : parentCommentEntityList) {
+            parentCommentIds.add(commentEntity.getId());
+            parentComments.add(convertToDto(commentEntity, userId));
+        }
+
+        List<CommentEntity> childrenCommentEntityList = jpaQueryFactory
+                .selectFrom(qChildCommentEntity)
+                .leftJoin(qChildCommentEntity.parent, qCommentEntity).fetchJoin()
+                .leftJoin(qChildCommentEntity.user, qUserEntity).fetchJoin()
+                .leftJoin(qCommentEntity.commentLikes, qCommentLikeEntity).fetchJoin()
+                .where(qChildCommentEntity.content.id.eq(contentId)
+                        .and(qChildCommentEntity.parent.id.in(parentCommentIds)) // 부모 댓글만 조회 // 삭제되지 않은 댓글만 조회
+                )
+                .orderBy(qChildCommentEntity.createdAt.asc())
+                .fetch();
+
+        // 4. 자식 댓글을 부모 댓글 ID로 그룹화
+        Map<Long, List<CommentModel.CommentDto>> childrenCommentsMap = new HashMap<>();
+        for (CommentEntity commentEntity : childrenCommentEntityList) {
+            Long parentId = commentEntity.getParent().getId();
+            // parentId에 해당하는 리스트를 가져오거나, 없으면 새로운 리스트 생성
+            List<CommentModel.CommentDto> commentList = childrenCommentsMap.computeIfAbsent(parentId, k -> new ArrayList<>());
+
+            // 새로운 CommentDto 객체를 리스트에 추가
+            commentList.add(convertToDto(commentEntity, userId));
+        }
+
+        // 5. 부모 댓글에 자식 댓글을 매핑
+        parentComments.forEach(parentComment -> {
+            List<CommentModel.CommentDto> children = childrenCommentsMap.getOrDefault(parentComment.getId(), new ArrayList<>());
+            parentComment.getChildren().addAll(children);
+        });
+
+        return parentComments;
+    }
+
+    private CommentModel.CommentDto convertToDto(CommentEntity commentEntity, String userId) {
+        return CommentModel.CommentDto.builder()
+                .id(commentEntity.getId())
+                .comment(commentEntity.getComment())
+                .userNickName(commentEntity.getUser().getNickName())
+                .createdAt(commentEntity.getCreatedAt())
+                .updatedAt(commentEntity.getUpdatedAt())
+                .isContentAuthor(commentEntity.getIsContentAuthor())
+                .isWriteUser(commentEntity.getUser().getId().equals(userId))
+                .like((long) commentEntity.getCommentLikes().size())
+                .children(new ArrayList<>())
+                .build();
+    }
+
+    public CommentEntity findSimpleComment(Long id) throws CustomException {
+        return Optional.ofNullable(
+                        jpaQueryFactory
+                                .selectFrom(qCommentEntity)
+                                .where(qCommentEntity.id.eq(id)
+                                        .and(qCommentEntity.delYn.eq(BooleanFlag.N)))
+                                .fetchOne()
+
+                )
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, String.format("해당 코멘트([%s])는 삭제되었거나, 없는 코멘트 입니다.", id)));
+    }
+}

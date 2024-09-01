@@ -43,7 +43,7 @@ public interface ContentControllerDocs {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "좋아요 적용 완료", content = @Content(schema = @Schema(implementation = Boolean.class)))
     })
-    public ApiResponseModel<Boolean> clickLike(@RequestBody ContentModel.UpdateLikeReq updateLikeReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
+    public ApiResponseModel<Boolean> clickLike(@RequestBody ContentModel.UpdateContentLikeReq updateContentLikeReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
 
     @Operation(summary = "컨텐츠 등록", description = "컨텐츠 등록 API 입니다")
     @ApiResponses(value = {

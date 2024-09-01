@@ -104,6 +104,31 @@ public class ContentDao {
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, String.format("Content [%s] is null", id)));
     }
 
+    public ContentEntity findSimpleContent(Long id) throws CustomException {
+        return Optional.ofNullable(
+                        jpaQueryFactory
+                                .selectFrom(qContentEntity)
+                                .where(qContentEntity.id.eq(id)
+                                        .and(qContentEntity.delYn.eq(BooleanFlag.N)))
+                                .fetchOne()
+
+                )
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, String.format("Content [%s] is null", id)));
+    }
+
+    public ContentEntity findContentWithUser(Long id) throws CustomException {
+        return Optional.ofNullable(
+                        jpaQueryFactory
+                                .selectFrom(qContentEntity)
+                                .leftJoin(qContentEntity.user, qUserEntity).fetchJoin()
+                                .where(qContentEntity.id.eq(id)
+                                        .and(qContentEntity.delYn.eq(BooleanFlag.N)))
+                                .fetchOne()
+
+                )
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, String.format("Content [%s] is null", id)));
+    }
+
     public List<ContentFileEntity> findContentFileByContentId(Long contentId) throws CustomException {
         return
                 Optional.ofNullable(
