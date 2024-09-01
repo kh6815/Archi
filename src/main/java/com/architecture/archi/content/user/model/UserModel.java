@@ -88,6 +88,11 @@ public class UserModel {
         private String newNickName;
     }
 
+    @Getter
+    public static class ChangeImageReq{
+        @NotNull(message = "필수값입니다.")
+        private Long fileId;
+    }
 
 
     /*
@@ -116,6 +121,38 @@ public class UserModel {
         public InitPasswordRes(String message, Boolean isSuccess) {
             this.message = message;
             this.isSuccess = isSuccess;
+        }
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class UserSimpleInfoRes{
+        private String nickName;
+        private String profileImagePath;
+
+        @Builder
+        public UserSimpleInfoRes(String nickName, String profileImagePath) {
+            this.nickName = nickName;
+            this.profileImagePath = profileImagePath;
+        }
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class UserDetailInfoRes{
+        private String id;
+        private String email;
+        private String nickName;
+        private String profileImagePath;
+
+        @Builder
+        public UserDetailInfoRes(String id, String email, String nickName, String profileImagePath) {
+            this.id = id;
+            this.email = email;
+            this.nickName = nickName;
+            this.profileImagePath = profileImagePath;
         }
     }
 }

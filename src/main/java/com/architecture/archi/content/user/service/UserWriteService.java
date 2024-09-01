@@ -7,7 +7,14 @@ import com.architecture.archi.common.error.CustomException;
 import com.architecture.archi.common.error.ExceptionCode;
 import com.architecture.archi.config.security.user.CustomUserDetails;
 import com.architecture.archi.content.user.model.UserModel;
+import com.architecture.archi.db.entity.auth.TokenPairEntity;
+import com.architecture.archi.db.entity.file.FileEntity;
 import com.architecture.archi.db.entity.user.UserEntity;
+import com.architecture.archi.db.entity.user.UserFileEntity;
+import com.architecture.archi.db.repository.auth.TokenPairRepository;
+import com.architecture.archi.db.repository.file.FileRepository;
+import com.architecture.archi.db.repository.user.UserDao;
+import com.architecture.archi.db.repository.user.UserFileRepository;
 import com.architecture.archi.db.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +28,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -30,6 +38,10 @@ public class UserWriteService {
 
     private final UserRepository userRepository;
     private final CommonEmail commonEmail;
+    private final UserFileRepository userFileRepository;
+    private final FileRepository fileRepository;
+    private final UserDao userDao;
+    private final TokenPairRepository tokenPairRepository;
 
     //@Transactional 기본적으로 error에 대해서만 롤백을 진행하고, Exception은 따로 옵션으로 설정해야한다.
     @Transactional(rollbackFor = Exception.class)
@@ -155,6 +167,45 @@ public class UserWriteService {
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "존재하지 않는 유저"));
 
         user.changeNickName(changeNickNameReq.getNewNickName());
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean changeImage(UserModel.ChangeImageReq changeImageReq, CustomUserDetails userDetails) throws CustomException {
+        // 기존에 있던 UserFile은 삭제
+        Optional<UserFileEntity> existUserFileEntity = userDao.findUserFileByUserId(userDetails.getUsername());
+        existUserFileEntity.ifPresent(UserFileEntity::delete);
+
+        FileEntity fileEntity = fileRepository.findById(changeImageReq.getFileId())
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "존재하지 않은 파일"));
+        UserFileEntity userFileEntity = UserFileEntity.builder()
+                .user(userDetails.getUser())
+                .file(fileEntity)
+                .build();
+
+        userFileRepository.save(userFileEntity);
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean deleteUser(CustomUserDetails userDetails) throws CustomException {
+        // 유저 delYn 변경
+        UserEntity userEntity = userRepository.findById(userDetails.getUsername())
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "존재하지 않는 유저"));
+
+        userEntity.deleteUser();
+
+        // token_pair 테이블 삭제
+        Optional<TokenPairEntity> optionalTokenPairEntity = tokenPairRepository.findByUserId(userDetails.getUsername());
+        optionalTokenPairEntity.ifPresent(tokenPairRepository::delete);
+
+        // user_file delYn 변경
+        Optional<UserFileEntity> optionalUserFileEntity = userDao.findUserFileByUserId(userDetails.getUsername());
+        optionalUserFileEntity.ifPresent(userFileRepository::delete);
+
+        // TODO 관련 content, content_file, comment 같은 경우 그 수가 너무 많을 수 있으므로 batch 나중에 삭제 ->  batch 돌릴때 1000 단위로 끊어서 돌리기
 
         return true;
     }

@@ -74,4 +74,7 @@ public class UserEntity {
     public void changeNickName(String newNickName) {
         this.nickName = newNickName;
     }
+    public void deleteUser(){
+        this.delYn = BooleanFlag.Y;
+    }
 }

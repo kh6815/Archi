@@ -14,8 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "유저 API", description = "유저 관련 컨트롤러입니다.")
 public interface UserControllerDocs {
@@ -51,13 +50,41 @@ public interface UserControllerDocs {
 
     @Operation(summary = "비밀번호 변경", description = "유저 비밀번호 변경 API 입니다")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "비밀번호 변경 완료", content = @Content(schema = @Schema(implementation = UserModel.ChangePasswordReq.class)))
+            @ApiResponse(responseCode = "201", description = "비밀번호 변경 완료", content = @Content(schema = @Schema(implementation = Boolean.class)))
     })
     public ApiResponseModel<Boolean> changePassword(@RequestBody UserModel.ChangePasswordReq changePasswordReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
 
     @Operation(summary = "닉네임 변경", description = "유저 닉네임 변경 API 입니다")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "닉네임 변경 완료", content = @Content(schema = @Schema(implementation = UserModel.ChangeNickNameReq.class)))
+            @ApiResponse(responseCode = "201", description = "닉네임 변경 완료", content = @Content(schema = @Schema(implementation = Boolean.class)))
     })
     public ApiResponseModel<Boolean> changeNickName(@RequestBody UserModel.ChangeNickNameReq changeNickNameReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
+
+    // 프로필 사진 변경
+    @Operation(summary = "프로필 사진 변경", description = "유저 프로필 사진 변경 API 입니다")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "이미지 변경 완료", content = @Content(schema = @Schema(implementation = Boolean.class)))
+    })
+    public ApiResponseModel<Boolean> changeImage(@Valid @RequestBody UserModel.ChangeImageReq changeImageReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
+
+    // 유저 심플 정보 조회
+    @Operation(summary = "유저 심플 정보 조회", description = "유저 심플 정보 조회 API 입니다")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "조회 완료", content = @Content(schema = @Schema(implementation = UserModel.UserSimpleInfoRes.class)))
+    })
+    public ApiResponseModel<UserModel.UserSimpleInfoRes> getSimpleUserInfo(@AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
+
+    // 유저 디테일 정보 조회
+    @Operation(summary = "유저 디테일 정보 조회", description = "유저 디테일 정보 조회 API 입니다")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "조회 완료", content = @Content(schema = @Schema(implementation = UserModel.UserDetailInfoRes.class)))
+    })
+    public ApiResponseModel<UserModel.UserDetailInfoRes> getDetailUserInfo(@AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
+
+    // 유저 삭제
+    @Operation(summary = "유저 삭제", description = "유저 삭제 API 입니다")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "삭제 완료", content = @Content(schema = @Schema(implementation = Boolean.class)))
+    })
+    public ApiResponseModel<Boolean> deleteUser(@AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
 }

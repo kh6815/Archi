@@ -60,16 +60,40 @@ public class UserController implements UserControllerDocs {
     }
 
     // 비밀번호 변경(현재 비밀번호, 바꿀 비밀번호, 확인 비밀번호)
-    @PreAuthorize("hasRole('USER')")
+//    @PreAuthorize("hasRole('USER')")
     @PatchMapping("/change-password")
     public ApiResponseModel<Boolean> changePassword(@Valid @RequestBody UserModel.ChangePasswordReq changePasswordReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
         return new ApiResponseModel<>(userWriteService.changePassword(changePasswordReq, userDetails));
     }
 
     // 닉네임 변경
-    @PreAuthorize("hasRole('USER')")
+//    @PreAuthorize("hasRole('USER')")
     @PatchMapping("/change-nickname")
     public ApiResponseModel<Boolean> changeNickName(@Valid @RequestBody UserModel.ChangeNickNameReq changeNickNameReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
        return new ApiResponseModel<>(userWriteService.changeNickName(changeNickNameReq, userDetails));
+    }
+
+    // 프로필 사진 변경
+    @PatchMapping("/change-image")
+    public ApiResponseModel<Boolean> changeImage(@Valid @RequestBody UserModel.ChangeImageReq changeImageReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
+        return new ApiResponseModel<>(userWriteService.changeImage(changeImageReq, userDetails));
+    }
+
+    // 유저 심플 정보 조회
+    @GetMapping
+    public ApiResponseModel<UserModel.UserSimpleInfoRes> getSimpleUserInfo(@AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
+       return new ApiResponseModel<>(userReadService.findUserSimpleInfo(userDetails));
+    }
+
+    // 유저 디테일 정보 조회
+    @GetMapping("/detail")
+    public ApiResponseModel<UserModel.UserDetailInfoRes> getDetailUserInfo(@AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
+        return new ApiResponseModel<>(userReadService.findUserDetailInfo(userDetails));
+    }
+
+    // 유저 삭제
+    @DeleteMapping
+    public ApiResponseModel<Boolean> deleteUser(@AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
+       return new ApiResponseModel<>(userWriteService.deleteUser(userDetails));
     }
 }
