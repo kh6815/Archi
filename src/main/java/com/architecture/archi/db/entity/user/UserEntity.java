@@ -31,7 +31,6 @@ public class UserEntity {
     private String id;
 
     @Column(name = "PW")
-    @NotNull
     private String pw;
 
     @Column(name = "EMAIL", unique = true)
@@ -40,11 +39,17 @@ public class UserEntity {
     @Column(name = "NICK_NAME", unique = true)
     private String nickName;
 
-    //TODO 프로필 이미지 삽입 -> S3
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "ROLE", nullable = false)
+    @Column(name = "ROLE", nullable = false) //default USER
     private RoleType role;
+
+    // provider : google이 들어감
+    @Column(name = "PROVIDER")
+    private String provider;
+
+    // providerId : 구굴 로그인 한 유저의 고유 ID가 들어감
+    @Column(name = "PROVIDER_ID")
+    private String providerId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "DEL_YN", columnDefinition = "enum('Y', 'N') default 'N'", nullable = false)
@@ -61,11 +66,13 @@ public class UserEntity {
     private LocalDateTime updatedAt;
 
     @Builder
-    public UserEntity(String id, String pw, String email, String nickName){
+    public UserEntity(String id, String pw, String email, String nickName, String provider, String providerId){
         this.id = id;
         this.pw = pw;
         this.email = email;
         this.nickName = nickName;
+        this.provider = provider;
+        this.providerId = providerId;
     }
 
     public void changePassword(String newPassword){
@@ -76,5 +83,8 @@ public class UserEntity {
     }
     public void deleteUser(){
         this.delYn = BooleanFlag.Y;
+    }
+    public void comeBackUser() {
+        this.delYn = BooleanFlag.N;
     }
 }

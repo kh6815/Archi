@@ -4,6 +4,8 @@ import com.architecture.archi.config.security.error.CustomAccessDeniedHandler;
 import com.architecture.archi.config.security.error.CustomAuthenticationEntryPoint;
 import com.architecture.archi.config.security.filter.JwtAuthFilter;
 import com.architecture.archi.config.security.user.CustomUserDetailsService;
+import com.architecture.archi.config.security.user.oauth2.CustomOauth2UserService;
+import com.architecture.archi.config.security.user.oauth2.OAuth2SuccessHandler;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +14,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -48,6 +51,8 @@ public class SecurityConfig  {
     private final RedisTemplate<String, Object> accessTokenBlackListTemplate;
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final CustomOauth2UserService customOauth2UserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -62,6 +67,21 @@ public class SecurityConfig  {
         //FormLogin, BasicHttp 비활성화
         http.formLogin((form) -> form.disable());
         http.httpBasic(AbstractHttpConfigurer::disable);
+
+//        // OAuth 2.0 로그인 방식 설정
+//        http.oauth2Login((auth) -> auth.loginPage("/oauth-login/login")
+//                .successHandler(oAuth2SuccessHandler)
+////                        .defaultSuccessUrl("/oauth-login") //기본 리디렉션 URL 설정: 사용자가 OAuth2 인증을 성공적으로 마친 후 이동할 기본 페이지를 지정합니다.
+//                .failureUrl("/oauth-login/login")
+//                .permitAll());
+
+        // oauth2 설정
+        http.oauth2Login(oauth -> // OAuth2 로그인 기능에 대한 여러 설정의 진입점
+                // OAuth2 로그인 성공 이후 사용자 정보를 가져올 때의 설정을 담당
+                oauth.userInfoEndpoint(c -> c.userService(customOauth2UserService))
+                        // 로그인 성공 시 핸들러
+                        .successHandler(oAuth2SuccessHandler)
+        );
 
         //JwtAuthFilter를 UsernamePasswordAuthenticationFilter 앞에 추가
         http.addFilterBefore(new JwtAuthFilter(customUserDetailsService, jwtUtil, accessTokenBlackListTemplate), UsernamePasswordAuthenticationFilter.class);
@@ -83,6 +103,11 @@ public class SecurityConfig  {
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/user/check-nickname")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/user/init-password")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/index.html")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/login/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/error")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/favicon.ico")).permitAll()
                         //@PreAuthrization을 사용할 것이기 때문에 모든 경로에 대한 인증처리는 Pass
 //                        .anyRequest().permitAll()
                         .anyRequest().authenticated()

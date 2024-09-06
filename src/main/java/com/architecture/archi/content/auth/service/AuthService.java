@@ -40,6 +40,20 @@ public class AuthService {
             throw new CustomException(ExceptionCode.BAD_PW_REQUEST);
         }
 
+        return makeToken(user);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public ApiResponseModel<AuthModel.AuthLoginRes> oauthLogin(String oauthId) throws CustomException {
+
+        UserEntity user = userRepository.findById(oauthId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.BAD_ID_REQUEST));
+
+        return makeToken(user);
+    }
+
+    private ApiResponseModel<AuthModel.AuthLoginRes> makeToken(UserEntity user) {
+
         // 인증 객체를 통해 tokenPair 생성
         String jwt = jwtUtils.createAccessToken(user.getId());
         String refresh = jwtUtils.createRefreshToken(user.getId());

@@ -29,6 +29,10 @@ public class QUserEntity extends EntityPathBase<UserEntity> {
 
     public final StringPath nickName = createString("nickName");
 
+    public final StringPath provider = createString("provider");
+
+    public final StringPath providerId = createString("providerId");
+
     public final StringPath pw = createString("pw");
 
     public final EnumPath<com.architecture.archi.common.enumobj.RoleType> role = createEnum("role", com.architecture.archi.common.enumobj.RoleType.class);
