@@ -1,5 +1,6 @@
 package com.architecture.archi.config.mail;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -13,12 +14,15 @@ import static java.lang.System.getenv;
 
 @Configuration
 public class MailConfig {
+
+    @Value("${spring.mail.username}")
+    private String username;
+
+    @Value("${spring.mail.password}")
+    private String password;
+
     @Bean
     public JavaMailSender getJavaMailSender() {
-        Map<String, String> env = getenv();
-        String username = env.get("mail.username");
-        String password = env.get("mail.password");
-
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
