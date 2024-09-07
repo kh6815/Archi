@@ -23,12 +23,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
@@ -84,19 +86,35 @@ public class UserWriteService {
                 .message(randomPassword + " 해당 비밀번호로 초기화 됐습니다. 다시 로그인하여 비밀번호를 변경하세요")
                 .build();
 
-        if(commonEmail.sendMail(emailMessage)){
-            user.changePassword(EncryptUtil.encryptString(randomPassword));
+        String encryptRandomPassword = EncryptUtil.encryptString(randomPassword);
 
-            return UserModel.InitPasswordRes.builder()
-                    .message(commonEmail.maskEmail(user.getEmail()) + "로 초기화된 이메일을 전송하였습니다.")
-                    .isSuccess(true)
-                    .build();
-        }
+        commonEmail.sendMail(emailMessage).addCallback(new ListenableFutureCallback<>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                // 비동기 동작은 메인스레드가 아닌 분리된 스레드에서 동작함으로 메인 스레드의 트랜잭션 범위를 벗어남
+                // 고로 따로 트랜잭션을 동작하는 메소드를 형태로 구현
 
+                // 비동기 성공 후에 트랜잭션을 재시작하여 비밀번호 저장
+                saveUserPassword(user, encryptRandomPassword);
+            }
+
+            @Override
+            public void onFailure(Throwable ex) {
+                // 이메일 전송 실패 시 처리
+                log.error("이메일 전송 실패: " + ex.getMessage());
+            }
+        });
         return UserModel.InitPasswordRes.builder()
-                .message("")
-                .isSuccess(false)
+                .message(commonEmail.maskEmail(user.getEmail()) + "로 초기화된 이메일을 전송하였습니다. (이메일 전송시 몇분의 시간이 걸릴 수 있습니다.)")
+                .isSuccess(true)
                 .build();
+    }
+
+    // 별도의 트랜잭션을 사용하여 비밀번호 저장
+    @Transactional
+    protected void saveUserPassword(UserEntity user, String newPassword) {
+        user.changePassword(newPassword);
+        userRepository.save(user);
     }
 
     public static String generateRandomPassword() {
