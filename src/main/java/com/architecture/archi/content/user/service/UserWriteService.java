@@ -223,8 +223,6 @@ public class UserWriteService {
         Optional<UserFileEntity> optionalUserFileEntity = userDao.findUserFileByUserId(userDetails.getUsername());
         optionalUserFileEntity.ifPresent(userFileRepository::delete);
 
-        // TODO 관련 content, content_file, comment 같은 경우 그 수가 너무 많을 수 있으므로 batch 나중에 삭제 ->  batch 돌릴때 1000 단위로 끊어서 돌리기
-
         return true;
     }
 }

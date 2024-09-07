@@ -60,7 +60,6 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
                 userEntity.comeBackUser();
             }
         } else{
-            // TODO 이미 존재하는 이메일일 경우 에러 발생
             boolean isExistEmail = userRepository.existsByEmail(email);
 
             if (isExistEmail) {
