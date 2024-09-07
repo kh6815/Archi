@@ -29,10 +29,23 @@ public class UserReadService {
         try {
             isExistId = userRepository.existsById(id);
         }catch (Exception e){
-            throw new CustomException(ExceptionCode.INTERNAL_SERVER_ERROR);
+            throw new CustomException(ExceptionCode.ALREADY_EXIST, "이미 존재하는 아이디 입니다.");
         }
 
         return isExistId;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean existCheckEmail(String email) throws CustomException {
+        Boolean isExistEmail;
+
+        try {
+            isExistEmail = userRepository.existsByEmail(email);
+        }catch (Exception e){
+            throw new CustomException(ExceptionCode.ALREADY_EXIST, "이미 존재하는 이메일 입니다.");
+        }
+
+        return isExistEmail;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -42,7 +55,7 @@ public class UserReadService {
         try {
             isExistNickName = userRepository.existsByNickName(nickName);
         }catch (Exception e){
-            throw new CustomException(ExceptionCode.INTERNAL_SERVER_ERROR);
+            throw new CustomException(ExceptionCode.ALREADY_EXIST, "이미 존재하는 닉네임 입니다.");
         }
 
         return isExistNickName;

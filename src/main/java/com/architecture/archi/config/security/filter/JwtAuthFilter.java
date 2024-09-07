@@ -31,6 +31,7 @@ public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilte
 
         String[] excludePath = {"/api/v1/user/signup",
                 "/api/v1/user/check-id",
+                "/api/v1/user/check-email",
                 "/api/v1/user/check-nickname",
                 "/api/v1/user/init-password",
                 "/api/v1/auth/**",
@@ -40,6 +41,7 @@ public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilte
                 "/api-docs",
                 "/swagger-ui/index.html",
                 "/index.html",
+                "/login/oauth2/code/**",
                 "/oauth-login/login"};
         String path = request.getRequestURI();
         return Arrays.stream(excludePath).anyMatch(path::startsWith);

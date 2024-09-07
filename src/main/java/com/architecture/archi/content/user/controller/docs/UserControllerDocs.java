@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +34,15 @@ public interface UserControllerDocs {
             @ApiResponse(responseCode = "201", description = "체크 결과", content = @Content(schema = @Schema(implementation = Boolean.class)))
     })
     public ApiResponseModel<Boolean> checkId(@RequestParam("id") String id) throws CustomException;
+
+    @Operation(summary = "이메일 체크", description = "유저 이메일체크 API 입니다")
+    @Parameters(value = {
+            @Parameter(name = "email", description = "체크할 email", required = true),
+    })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "체크 결과", content = @Content(schema = @Schema(implementation = Boolean.class)))
+    })
+    public ApiResponseModel<Boolean> checkEmail(@RequestParam("email") String email) throws CustomException;
 
     @Operation(summary = "닉네임 체크", description = "유저 닉네임체크 API 입니다")
     @Parameters(value = {

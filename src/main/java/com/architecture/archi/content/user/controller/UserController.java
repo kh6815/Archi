@@ -9,6 +9,7 @@ import com.architecture.archi.content.user.service.UserReadService;
 import com.architecture.archi.content.user.service.UserWriteService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,16 @@ public class UserController implements UserControllerDocs {
            ) throws CustomException {
        return new ApiResponseModel<>(userReadService.existCheckId(id));
    }
+
+    // 이메일 체크
+    @GetMapping("/check-email")
+    public ApiResponseModel<Boolean> checkEmail(
+            @NotBlank(message = "필수값입니다.")
+            @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,6}$", message = "형식이 올바르지 않습니다.")
+            @RequestParam("email") String email
+    ) throws CustomException {
+        return new ApiResponseModel<>(userReadService.existCheckEmail(email));
+    }
 
     // 닉네임 체크
     @GetMapping("/check-nickname")

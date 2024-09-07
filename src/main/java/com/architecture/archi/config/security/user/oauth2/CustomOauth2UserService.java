@@ -9,6 +9,7 @@ import com.architecture.archi.db.repository.user.UserDao;
 import com.architecture.archi.db.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -59,6 +60,13 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
                 userEntity.comeBackUser();
             }
         } else{
+            // TODO 이미 존재하는 이메일일 경우 에러 발생
+            boolean isExistEmail = userRepository.existsByEmail(email);
+
+            if (isExistEmail) {
+                throw new OAuth2AuthenticationException(ExceptionCode.ALREADY_EXIST.getResultMessage());
+            }
+
             String now = LocalDateTime.now().toString();
             for (String s : Arrays.asList("-", ".", ":", "T")) {
                 now = now.replace(s,"");

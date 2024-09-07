@@ -5,6 +5,7 @@ import com.architecture.archi.config.security.error.CustomAuthenticationEntryPoi
 import com.architecture.archi.config.security.filter.JwtAuthFilter;
 import com.architecture.archi.config.security.user.CustomUserDetailsService;
 import com.architecture.archi.config.security.user.oauth2.CustomOauth2UserService;
+import com.architecture.archi.config.security.user.oauth2.OAuth2FailureHandler;
 import com.architecture.archi.config.security.user.oauth2.OAuth2SuccessHandler;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -52,6 +53,7 @@ public class SecurityConfig  {
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2FailureHandler oAuth2FailureHandler;
     private final CustomOauth2UserService customOauth2UserService;
 
     @Bean
@@ -81,6 +83,8 @@ public class SecurityConfig  {
                 oauth.userInfoEndpoint(c -> c.userService(customOauth2UserService))
                         // 로그인 성공 시 핸들러
                         .successHandler(oAuth2SuccessHandler)
+                        // 로그인 실패 시 핸들러
+                        .failureHandler(oAuth2FailureHandler)
         );
 
         //JwtAuthFilter를 UsernamePasswordAuthenticationFilter 앞에 추가
@@ -100,6 +104,7 @@ public class SecurityConfig  {
                         .requestMatchers(new AntPathRequestMatcher("/api-docs")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/user/signup")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/user/check-id")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/v1/user/check-email")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/user/check-nickname")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/user/init-password")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/**")).permitAll()
@@ -108,6 +113,7 @@ public class SecurityConfig  {
                         .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/error")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/favicon.ico")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/login/oauth2/code/**")).permitAll()
                         //@PreAuthrization을 사용할 것이기 때문에 모든 경로에 대한 인증처리는 Pass
 //                        .anyRequest().permitAll()
                         .anyRequest().authenticated()
