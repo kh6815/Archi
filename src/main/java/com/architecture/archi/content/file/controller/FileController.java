@@ -32,4 +32,9 @@ public class FileController implements FileControllerDocs {
     public ApiResponseModel<FileModel.FileRes> addFile(@RequestPart("file") MultipartFile file) throws CustomException {
         return new ApiResponseModel<>(fileService.saveFile(file));
     }
+
+    @DeleteMapping(value = {"/{id}"})
+    public ApiResponseModel<Boolean> deleteFile(@PathVariable("id") Long fileId) throws CustomException {
+        return new ApiResponseModel<>(fileService.deleteFile(fileId));
+    }
 }

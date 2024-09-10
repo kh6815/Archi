@@ -28,21 +28,49 @@ public class AwsS3Service {
     @Value("${spring.cloud.aws.folder.photo}")
     private String photoFolder;
 
-    public String uploadFile(MultipartFile multipartFile) throws CustomException {
+//    public String uploadFile(MultipartFile multipartFile) throws CustomException {
+//
+//        if(multipartFile.isEmpty()) {
+//            log.info("image is null");
+//            return "";
+//        }
+//
+//        String fileName = getFileName(multipartFile);
+//
+//        try {
+//            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+//                    .bucket(bucketName)
+//                    .contentType(multipartFile.getContentType())
+//                    .contentLength(multipartFile.getSize())
+//                    .key(fileName)
+//                    .build();
+//            RequestBody requestBody = RequestBody.fromBytes(multipartFile.getBytes());
+//            s3Client.putObject(putObjectRequest, requestBody);
+//        } catch (IOException e) {
+//            log.error("cannot upload image",e);
+//            throw new CustomException(ExceptionCode.INTERNAL_SERVER_ERROR, "서버오류로 인해 이미지를 업로드 하지 못했습니다.");
+//        }
+//        GetUrlRequest getUrlRequest = GetUrlRequest.builder()
+//                .bucket(bucketName)
+//                .key(fileName)
+//                .build();
+//
+//        return s3Client.utilities().getUrl(getUrlRequest).toString();
+//    }
+
+    public String uploadFile(MultipartFile multipartFile, String fileName) throws CustomException {
 
         if(multipartFile.isEmpty()) {
             log.info("image is null");
             return "";
         }
 
-        String fileName = getFileName(multipartFile);
-
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .contentType(multipartFile.getContentType())
                     .contentLength(multipartFile.getSize())
-                    .key(fileName)
+                    .key(fileName) // 미리 생성된 fileName을 사용
                     .build();
             RequestBody requestBody = RequestBody.fromBytes(multipartFile.getBytes());
             s3Client.putObject(putObjectRequest, requestBody);
@@ -50,12 +78,13 @@ public class AwsS3Service {
             log.error("cannot upload image",e);
             throw new CustomException(ExceptionCode.INTERNAL_SERVER_ERROR, "서버오류로 인해 이미지를 업로드 하지 못했습니다.");
         }
+
         GetUrlRequest getUrlRequest = GetUrlRequest.builder()
                 .bucket(bucketName)
                 .key(fileName)
                 .build();
 
-        return s3Client.utilities().getUrl(getUrlRequest).toString();
+        return s3Client.utilities().getUrl(getUrlRequest).toString(); // S3 파일 URL 반환
     }
 
     public String getFileName(MultipartFile multipartFile) {
@@ -64,10 +93,10 @@ public class AwsS3Service {
     }
 
     //파일 삭제
-    public void deleteFile(String fileName){
+    public void deleteFile(String filePath){
         DeleteObjectRequest request = DeleteObjectRequest.builder()
                 .bucket(bucketName)
-                .key(fileName)
+                .key(filePath)
                 .build();
         s3Client.deleteObject(request);
     }
