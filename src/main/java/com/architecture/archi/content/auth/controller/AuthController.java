@@ -29,7 +29,7 @@ public class AuthController implements AuthControllerDocs {
     }
 
     @PostMapping("/logout")
-    public ApiResponseModel<AuthModel.AuthLoginRes> logout(@RequestBody AuthModel.AuthLoginReq request) throws CustomException {
+    public ApiResponseModel<AuthModel.AuthLoginRes> logout(@RequestBody AuthModel.AuthLogoutReq request) throws CustomException {
         return authService.logout(request.getId());
     }
 

@@ -29,7 +29,7 @@ public interface AuthControllerDocs {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "로그아웃 완료", content = @Content(schema = @Schema(implementation = AuthModel.AuthLoginRes.class)))
     })
-    public ApiResponseModel<AuthModel.AuthLoginRes> logout(@RequestBody AuthModel.AuthLoginReq request) throws CustomException;
+    public ApiResponseModel<AuthModel.AuthLoginRes> logout(@RequestBody AuthModel.AuthLogoutReq request) throws CustomException;
 
     @Operation(summary = "리프레시", description = "리프레시 API 입니다")
     @ApiResponses(value = {

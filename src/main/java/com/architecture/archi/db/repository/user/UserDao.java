@@ -13,7 +13,12 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.querydsl.core.group.GroupBy.groupBy;
 
 @RequiredArgsConstructor
 @Repository

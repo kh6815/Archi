@@ -1,7 +1,8 @@
-package com.architecture.archi.db.entity.content;
+package com.architecture.archi.db.entity.notice;
 
 import com.architecture.archi.common.enumobj.BooleanFlag;
 import com.architecture.archi.db.entity.category.CategoryEntity;
+import com.architecture.archi.db.entity.content.ContentFileEntity;
 import com.architecture.archi.db.entity.like.ContentLikeEntity;
 import com.architecture.archi.db.entity.user.UserEntity;
 import jakarta.persistence.*;
@@ -9,7 +10,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
@@ -27,8 +27,8 @@ import java.util.List;
 @DynamicInsert // 값이 있는것만 DB에 insert 하여, null이 DB에 들어가는 걸 방지
 @DynamicUpdate // 변경된 필드들만 UPDATE 문에 포함되도록 최적화
 @Entity
-@Table(name = "CONTENT")
-public class ContentEntity {
+@Table(name = "NOTICE")
+public class NoticeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,11 +39,6 @@ public class ContentEntity {
     @NotNull
     private UserEntity user;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CATEGORY_ID")
-    @NotNull
-    private CategoryEntity category;
-
     @Column(name = "TITLE")
     @NotNull
     private String title;
@@ -52,11 +47,8 @@ public class ContentEntity {
     @NotNull
     private String content;
 
-    @OneToMany(mappedBy = "content", fetch=FetchType.LAZY)
-    private List<ContentLikeEntity> contentLikes = new ArrayList<>();
-
-    @OneToMany(mappedBy = "content", fetch=FetchType.LAZY)
-    private List<ContentFileEntity> contentFiles = new ArrayList<>();
+    @OneToMany(mappedBy = "notice", fetch=FetchType.LAZY)
+    private List<NoticeFileEntity> noticeFiles = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "DEL_YN", columnDefinition = "enum('Y', 'N') default 'N'", nullable = false)
@@ -73,17 +65,15 @@ public class ContentEntity {
     private LocalDateTime updatedAt;
 
     @Builder
-    public ContentEntity(UserEntity user, CategoryEntity category, String title, String content){
+    public NoticeEntity(UserEntity user, String title, String content){
         this.user = user;
-        this.category = category;
         this.title = title;
         this.content = content;
     }
 
-    public void updateContent(String newTitle, String newContent, CategoryEntity newCategory){
+    public void updateContent(String newTitle, String newContent){
         this.title = newTitle;
         this.content = newContent;
-        this.category = newCategory;
     }
 
     public void deleteContent(){

@@ -3,6 +3,7 @@ package com.architecture.archi.content.content.controller.docs;
 import com.architecture.archi.common.error.CustomException;
 import com.architecture.archi.common.model.ApiResponseModel;
 import com.architecture.archi.config.security.user.CustomUserDetails;
+import com.architecture.archi.content.admin.model.AdminModel;
 import com.architecture.archi.content.content.model.ContentModel;
 import com.architecture.archi.content.user.model.UserModel;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +19,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "콘텐츠 API", description = "콘텐츠 관련 컨트롤러입니다.")
 public interface ContentControllerDocs {
@@ -62,4 +65,27 @@ public interface ContentControllerDocs {
             @ApiResponse(responseCode = "201", description = "컨텐츠 삭제 완료", content = @Content(schema = @Schema(implementation = Boolean.class)))
     })
     public ApiResponseModel<Boolean> deleteContent(@RequestBody ContentModel.DeleteContentReq deleteContentReq) throws CustomException;
+
+    @Operation(summary = "카테고리 조회", description = "카테고리 조회 API 입니다")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "카테고리 조회 완료", content = @Content(schema = @Schema(implementation = AdminModel.GetCategoryRes.class)))
+    })
+    public ApiResponseModel<AdminModel.GetCategoryRes> getCategory() throws CustomException;
+
+    @Operation(summary = "공지사항 리스트 조회", description = "공지사항 리스트 조회 API 입니다")
+    @Parameters(value = {})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "조회 완료", content = @Content(schema = @Schema(implementation = List.class)))
+    })
+    public ApiResponseModel<List<ContentModel.NoticeListDto>> getNotices() throws Exception;
+
+    // 공지사항 조회
+    @Operation(summary = "공지사항 조회", description = "공지사항 조회 API 입니다")
+    @Parameters(value = {
+            @Parameter(name = "id", description = "조회할 공지사항 아이디 입니다.", required = true),
+    })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "조회 완료", content = @Content(schema = @Schema(implementation = ContentModel.NoticeDto.class)))
+    })
+    public ApiResponseModel<ContentModel.NoticeDto> getNotice(@PathVariable("id") Long id, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
 }

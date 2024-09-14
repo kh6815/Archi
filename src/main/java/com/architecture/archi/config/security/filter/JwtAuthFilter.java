@@ -35,6 +35,8 @@ public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilte
                 "/api/v1/user/check-nickname",
                 "/api/v1/user/init-password",
                 "/api/v1/auth/**",
+                "/api/v1/content/list/**",
+                "/api/v1/comment/list/**",
                 "/swagger-ui/**",
                 "/swagger-ui.html",
                 "/v3/api-docs/**",
@@ -42,7 +44,7 @@ public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilte
                 "/swagger-ui/index.html",
                 "/index.html",
                 "/login/oauth2/code/**",
-                "/oauth-login/login"};
+                "/oauth-login/login",};
         String path = request.getRequestURI();
         return Arrays.stream(excludePath).anyMatch(path::startsWith);
     }

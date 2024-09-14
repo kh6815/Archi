@@ -1,15 +1,18 @@
-package com.architecture.archi.content.category.model;
+package com.architecture.archi.content.admin.model;
 
 import com.architecture.archi.common.enumobj.BooleanFlag;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-public class CategoryModel {
+public class AdminModel {
     /*
     * request
     * */
@@ -18,6 +21,37 @@ public class CategoryModel {
         private Long parentsId; // 최상단 노드일 경우 0
         @NotBlank(message = "필수값입니다.")
         private String categoryName;
+    }
+
+    @Getter
+    public static class UpdateCategoryReq{
+        private Long id; // 최상단 노드일 경우 0
+        @NotBlank(message = "필수값입니다.")
+        private String name;
+    }
+
+    @Getter
+    public static class AddNoticeReq{
+        @NotBlank(message = "필수값입니다.")
+        private String title;
+
+        @NotBlank(message = "필수값입니다.")
+        private String content;
+
+        private List<Long> imgFileIdList;
+    }
+
+    @Getter
+    public static class UpdateNoticeReq{
+        private Long id;
+        private String title;
+        private String content;
+        private List<Long> imgFileIdList;
+    }
+
+    @Getter
+    public static class DeleteNoticeReq{
+        private List<Long> ids;
     }
 
     /*

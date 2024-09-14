@@ -1,7 +1,6 @@
 package com.architecture.archi.content.content.model;
 
-import com.architecture.archi.common.enumobj.BooleanFlag;
-import com.architecture.archi.content.category.model.CategoryModel;
+import com.architecture.archi.content.file.model.FileModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -65,16 +64,22 @@ public class ContentModel {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime updatedAt;
         private Boolean isAvailableUpdate;
+        private String contentAuthorNickName;
+        private String contentAuthorImgUrl;
         private Long like;
+        private List<String> likeUserIds;
+        private List<FileModel.FileRes> fileList;
 
         @Builder
-        public ContentDto(Long id, String categoryName, String title, String content, LocalDateTime updatedAt, Boolean isAvailableUpdate, Long like) {
+        public ContentDto(Long id, String categoryName, String title, String content, LocalDateTime updatedAt, Boolean isAvailableUpdate, String contentAuthorNickName, String contentAuthorImgUrl, Long like) {
             this.id = id;
             this.categoryName = categoryName;
             this.title = title;
             this.content = content;
             this.updatedAt = updatedAt;
             this.isAvailableUpdate = isAvailableUpdate;
+            this.contentAuthorNickName = contentAuthorNickName;
+            this.contentAuthorImgUrl = contentAuthorImgUrl;
             this.like = like;
         }
     }
@@ -90,6 +95,7 @@ public class ContentModel {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime updatedAt;
         private Long like;
+        private String imgUrl;
 
         @Builder
         public ContentListDto(Long id, String categoryName, String title, String content, LocalDateTime updatedAt, Long like) {
@@ -99,6 +105,48 @@ public class ContentModel {
             this.content = content;
             this.updatedAt = updatedAt;
             this.like = like;
+//            this.imgUrl = imgUrl;
+        }
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class NoticeDto{
+        private Long id;
+        private String title;
+        private String content;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+        private LocalDateTime updatedAt;
+        private Boolean isAvailableUpdate;
+
+        @Builder
+        public NoticeDto(Long id, String title, String content, LocalDateTime updatedAt, Boolean isAvailableUpdate) {
+            this.id = id;
+            this.title = title;
+            this.content = content;
+            this.updatedAt = updatedAt;
+            this.isAvailableUpdate = isAvailableUpdate;
+        }
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class NoticeListDto{
+        private Long id;
+        private String title;
+        private String content;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+        private LocalDateTime updatedAt;
+        private String imgUrl;
+
+        @Builder
+        public NoticeListDto(Long id, String title, String content, LocalDateTime updatedAt) {
+            this.id = id;
+            this.title = title;
+            this.content = content;
+            this.updatedAt = updatedAt;
         }
     }
 }

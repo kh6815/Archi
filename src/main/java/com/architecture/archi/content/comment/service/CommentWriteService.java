@@ -65,6 +65,7 @@ public class CommentWriteService {
             throw new CustomException(ExceptionCode.INVALID, "댓글 작성자가 아니면 수정할 수 없습니다.");
         }
 
+//        commentDao.updateComment(updateCommentReq.getCommentId(), updateCommentReq.getComment());
         commentEntity.updateComment(updateCommentReq.getComment());
         return true;
     }

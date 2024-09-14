@@ -23,6 +23,10 @@ public class CommentReadService {
 
     @Transactional(rollbackFor = Exception.class)
     public List<CommentModel.CommentDto> findComments(Long contentId, CustomUserDetails userDetails) throws CustomException {
-        return commentDao.findCommentsByContent(contentId, userDetails.getUsername());
+        String userId = null;
+        if(userDetails != null){
+            userId = userDetails.getUsername();
+        }
+        return commentDao.findCommentsByContent(contentId, userId);
     }
 }

@@ -26,6 +26,8 @@ public class QContentEntity extends EntityPathBase<ContentEntity> {
 
     public final StringPath content = createString("content");
 
+    public final ListPath<ContentFileEntity, QContentFileEntity> contentFiles = this.<ContentFileEntity, QContentFileEntity>createList("contentFiles", ContentFileEntity.class, QContentFileEntity.class, PathInits.DIRECT2);
+
     public final ListPath<com.architecture.archi.db.entity.like.ContentLikeEntity, com.architecture.archi.db.entity.like.QContentLikeEntity> contentLikes = this.<com.architecture.archi.db.entity.like.ContentLikeEntity, com.architecture.archi.db.entity.like.QContentLikeEntity>createList("contentLikes", com.architecture.archi.db.entity.like.ContentLikeEntity.class, com.architecture.archi.db.entity.like.QContentLikeEntity.class, PathInits.DIRECT2);
 
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);

@@ -1,22 +1,24 @@
 package com.architecture.archi.content.content.controller;
 
 import com.architecture.archi.common.error.CustomException;
+import com.architecture.archi.common.error.ExceptionCode;
 import com.architecture.archi.common.model.ApiResponseModel;
 import com.architecture.archi.config.security.user.CustomUserDetails;
-import com.architecture.archi.content.category.model.CategoryModel;
+import com.architecture.archi.content.admin.model.AdminModel;
 import com.architecture.archi.content.content.controller.docs.ContentControllerDocs;
 import com.architecture.archi.content.content.model.ContentModel;
 import com.architecture.archi.content.content.service.ContentReadService;
 import com.architecture.archi.content.content.service.ContentWriteService;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -26,11 +28,18 @@ public class ContentController implements ContentControllerDocs {
 
     private final ContentReadService contentReadService;
     private final ContentWriteService contentWriteService;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     // 컨텐츠 리스트 조회 - page 적용
     @GetMapping("/list/{categoryId}")
     public ApiResponseModel<Page<ContentModel.ContentListDto>> getContents(@PathVariable("categoryId") Long categoryId, Pageable pageable) throws Exception {
         return new ApiResponseModel<>(contentReadService.findContents(categoryId, pageable));
+    }
+
+    // 인기 컨텐츠 조회
+    @GetMapping("/list/popular")
+    public ApiResponseModel<List<ContentModel.ContentListDto>> getPopularContent() throws CustomException {
+        return new ApiResponseModel<>(contentReadService.findPopularContent());
     }
 
     // 컨텐츠 조회
@@ -63,5 +72,25 @@ public class ContentController implements ContentControllerDocs {
         return new ApiResponseModel<>(contentWriteService.updateLike(updateContentLikeReq, userDetails));
     }
 
-    //TODO admin에서 쓸 content 검색과 검색 필터를 만들기(유저 id, 제목, 등등)
+    @GetMapping("/list/category")
+    public ApiResponseModel<AdminModel.GetCategoryRes> getCategory() throws CustomException {
+        try{
+            AdminModel.GetCategoryRes res = (AdminModel.GetCategoryRes) redisTemplate.opsForValue().get("categories");
+            return new ApiResponseModel<>(res);
+        } catch(Exception e){
+            throw new CustomException(ExceptionCode.INTERNAL_SERVER_ERROR, "서버 오류");
+        }
+    }
+
+    // 공지사항 리스트 조회
+    @GetMapping("/list/notice")
+    public ApiResponseModel<List<ContentModel.NoticeListDto>> getNotices() throws Exception {
+        return new ApiResponseModel<>(contentReadService.findNotices());
+    }
+
+    // 공지사항 조회
+    @GetMapping("/notice/{id}")
+    public ApiResponseModel<ContentModel.NoticeDto> getNotice(@PathVariable("id") Long id, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
+        return new ApiResponseModel<>(contentReadService.findNotice(id, userDetails));
+    }
 }

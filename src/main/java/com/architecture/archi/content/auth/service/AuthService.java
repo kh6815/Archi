@@ -85,6 +85,7 @@ public class AuthService {
         result.setId(user.getId());
         result.setAccessToken(jwtUtils.addPrefix(jwt));
         result.setRefreshToken(jwtUtils.addPrefix(refresh));
+        result.setRole(user.getRole());
 
         return new ApiResponseModel<>(result);
     }
@@ -108,7 +109,7 @@ public class AuthService {
                 );
 
         AuthModel.AuthLoginRes result = new AuthModel.AuthLoginRes();
-        result.setId(userId);
+//        result.setId(userId);
         return new ApiResponseModel<>(result);
     }
 
@@ -165,6 +166,7 @@ public class AuthService {
             result.setId(user.getId());
             result.setAccessToken(jwtUtils.addPrefix(jwt));
             result.setRefreshToken(jwtUtils.addPrefix(refresh));
+            result.setRole(user.getRole());
             return new ApiResponseModel<>(result);
 
         } else {

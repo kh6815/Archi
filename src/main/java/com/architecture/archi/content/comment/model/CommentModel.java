@@ -50,25 +50,29 @@ public class CommentModel {
         private Long id;
         private String comment;
         private String userNickName;
+        private String commentAuthorImgUrl;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime createdAt;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime updatedAt;
+        private Long like;
+        private List<String> likeUserIds;
         private Boolean isContentAuthor; // 컨텐츠 작성자 댓글인지
         private Boolean isWriteUser; // 현재 접속한 유저가 수정할 수 있는 댓글인지
-        private Long like;
         private List<CommentDto> children;
 
         @Builder
-        public CommentDto(Long id, String comment, String userNickName, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean isContentAuthor, Boolean isWriteUser, Long like, List<CommentDto> children) {
+        public CommentDto(Long id, String comment, String userNickName, String commentAuthorImgUrl, LocalDateTime createdAt, LocalDateTime updatedAt, Long like, List<String> likeUserIds, Boolean isContentAuthor, Boolean isWriteUser, List<CommentDto> children) {
             this.id = id;
             this.comment = comment;
             this.userNickName = userNickName;
+            this.commentAuthorImgUrl = commentAuthorImgUrl;
             this.createdAt = createdAt;
             this.updatedAt = updatedAt;
+            this.like = like;
+            this.likeUserIds = likeUserIds;
             this.isContentAuthor = isContentAuthor;
             this.isWriteUser = isWriteUser;
-            this.like = like;
             this.children = children;
         }
     }
