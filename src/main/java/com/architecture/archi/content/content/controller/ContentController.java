@@ -104,7 +104,7 @@ public class ContentController implements ContentControllerDocs {
     }
 
     // 공지사항 조회
-    @GetMapping("/notice/{id}")
+    @GetMapping("/get/notice/{id}")
     public ApiResponseModel<ContentModel.NoticeDto> getNotice(@PathVariable("id") Long id, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
         return new ApiResponseModel<>(contentReadService.findNotice(id, userDetails));
     }

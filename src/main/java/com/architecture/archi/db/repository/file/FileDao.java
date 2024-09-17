@@ -79,6 +79,24 @@ public class FileDao {
                 .fetch();
     }
 
+    public List<FileModel.FileRes> findFilesByNoticeId(Long noticeId) {
+        return jpaQueryFactory
+                .select(
+                        Projections.constructor(FileModel.FileRes.class,
+                                qNoticeFileEntity.file.id,
+                                qNoticeFileEntity.file.url
+                        )
+
+                )
+                .from(qNoticeFileEntity)
+                .where(
+                        qNoticeFileEntity.delYn.eq(BooleanFlag.N)
+                                .and(qNoticeFileEntity.notice.id.eq(noticeId))
+                )
+                .orderBy(qNoticeFileEntity.file.name.asc())
+                .fetch();
+    }
+
     public Map<String, String> findFileUrlByUserIds(List<String> userIds){
         List<UserFileEntity> userFileEntityList = jpaQueryFactory
                 .selectFrom(qUserFileEntity)

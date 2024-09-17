@@ -236,11 +236,13 @@ public class ContentDao {
                                 .selectFrom(qNoticeFileEntity)
                                 .leftJoin(qNoticeFileEntity.file, qFileEntity).fetchJoin()
                                 .where(qNoticeFileEntity.id.in(
-                                        JPAExpressions.select(qNoticeFileEntity2.id.min())
+                                        JPAExpressions.select(qNoticeFileEntity2.id)
                                                 .from(qNoticeFileEntity2)
-                                                .where(qNoticeFileEntity2.notice.id.in(noticeIds))
+                                                .where(qNoticeFileEntity2.notice.id.in(noticeIds)
+                                                        .and(qNoticeFileEntity2.delYn.eq(BooleanFlag.N)))
                                                 .groupBy(qNoticeFileEntity2.notice.id))
                                 )
+                                .where(qFileEntity.originName.contains("image0"))
                                 .fetch()
                 )
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "not found"));

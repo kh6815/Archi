@@ -60,7 +60,6 @@ public class ContentReadService {
         ContentModel.ContentDto response = ContentModel.ContentDto.builder()
                 .id(contentEntity.getId())
                 .title(contentEntity.getTitle())
-                .delYn(contentEntity.getDelYn())
                 .content(contentEntity.getContent())
                 .categoryName(contentEntity.getCategory().getCategoryName())
                 .isAvailableUpdate(isAvailableUpdate)
@@ -124,13 +123,34 @@ public class ContentReadService {
     public ContentModel.NoticeDto findNotice(Long id, CustomUserDetails userDetails) throws CustomException {
         NoticeEntity noticeEntity = contentDao.findNotice(id);
 
-        return ContentModel.NoticeDto.builder()
+        String noticeAuthorImgUrl = null;
+        Optional<UserFileEntity> userFileEntityOptional = userDao.findUserFileWithFileByUserId(noticeEntity.getUser().getId());
+
+        if(userFileEntityOptional.isPresent()){
+            noticeAuthorImgUrl = userFileEntityOptional.get().getFile().getUrl();
+        }
+
+        boolean isAvailableUpdate = false;
+
+        if(userDetails != null){
+            isAvailableUpdate = noticeEntity.getUser().getId().equals(userDetails.getUsername());
+        }
+
+        System.out.println("noticeEntity.getUser().getId() = " + noticeEntity.getUser().getId());
+        System.out.println("userDetails.getUsername() = " + userDetails.getUsername());
+
+        ContentModel.NoticeDto response = ContentModel.NoticeDto.builder()
                 .id(noticeEntity.getId())
                 .title(noticeEntity.getTitle())
                 .content(noticeEntity.getContent())
-                .isAvailableUpdate(noticeEntity.getUser().getId().equals(userDetails.getUsername()))
+                .isAvailableUpdate(isAvailableUpdate)
                 .updatedAt(noticeEntity.getUpdatedAt())
+                .noticeAuthorNickName(noticeEntity.getUser().getNickName())
+                .noticeAuthorImgUrl(noticeAuthorImgUrl)
                 .build();
+
+        response.setFileList(fileDao.findFilesByNoticeId(id));
+        return response;
     }
 
     @Transactional(rollbackFor = Exception.class)

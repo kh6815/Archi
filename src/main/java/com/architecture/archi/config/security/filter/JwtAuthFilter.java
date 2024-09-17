@@ -1,7 +1,11 @@
 package com.architecture.archi.config.security.filter;
 
+import com.architecture.archi.common.error.CustomException;
+import com.architecture.archi.common.error.ExceptionCode;
+import com.architecture.archi.common.model.ApiResponseModel;
 import com.architecture.archi.config.security.JwtUtils;
 import com.architecture.archi.config.security.user.CustomUserDetailsService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +40,7 @@ public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilte
                 "/api/v1/user/init-password",
                 "/api/v1/auth/**",
                 "/api/v1/content/list/**",
-                "/api/v1/content/get/**",
+//                "/api/v1/content/get/**",
                 "/api/v1/comment/list/**",
                 "/swagger-ui/**",
                 "/swagger-ui.html",
@@ -78,11 +82,27 @@ public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilte
                         //현재 Request의 Security Context에 접근권한 설정
                         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                     }
+                } else {
+                    // 토큰이 유효하지 않은 경우 401 에러 응답
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    response.getWriter().write(objectMapper.writeValueAsString(createResponse(response, ExceptionCode.INVALID_TOKEN)));
+                    return; // 필터 체인을 더 이상 진행하지 않고 즉시 응답
                 }
+            } else {
+                // 토큰이 블랙리스트 -> 401 에러 응답
+                ObjectMapper objectMapper = new ObjectMapper();
+                response.getWriter().write(objectMapper.writeValueAsString(createResponse(response, ExceptionCode.UNAUTHORIZED)));
+                return; // 필터 체인을 더 이상 진행하지 않고 즉시 응답
             }
         }
 
         filterChain.doFilter(request, response); // 다음 필터로 넘기기
+    }
+
+    private ApiResponseModel createResponse(HttpServletResponse response, ExceptionCode exceptionCode) {
+        response.setStatus(exceptionCode.getStatusCode().value());
+        response.setContentType("application/json");
+        return new ApiResponseModel(exceptionCode.getResultCode(), exceptionCode.getResultMessage());
     }
 
 //    @Override

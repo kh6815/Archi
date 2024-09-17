@@ -71,7 +71,7 @@ public class ContentModel {
     public static class ContentDto{
         private Long id;
         private String categoryName;
-        private BooleanFlag delYn;
+//        private BooleanFlag delYn;
         private String title;
         private String content;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
@@ -84,10 +84,9 @@ public class ContentModel {
         private List<FileModel.FileRes> fileList;
 
         @Builder
-        public ContentDto(Long id, String categoryName, BooleanFlag delYn, String title, String content, LocalDateTime updatedAt, Boolean isAvailableUpdate, String contentAuthorNickName, String contentAuthorImgUrl, Long like) {
+        public ContentDto(Long id, String categoryName, String title, String content, LocalDateTime updatedAt, Boolean isAvailableUpdate, String contentAuthorNickName, String contentAuthorImgUrl, Long like) {
             this.id = id;
             this.categoryName = categoryName;
-            this.delYn = delYn;
             this.title = title;
             this.content = content;
             this.updatedAt = updatedAt;
@@ -133,14 +132,19 @@ public class ContentModel {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime updatedAt;
         private Boolean isAvailableUpdate;
+        private String noticeAuthorNickName;
+        private String noticeAuthorImgUrl;
+        private List<FileModel.FileRes> fileList;
 
         @Builder
-        public NoticeDto(Long id, String title, String content, LocalDateTime updatedAt, Boolean isAvailableUpdate) {
+        public NoticeDto(Long id, String title, String content, LocalDateTime updatedAt, Boolean isAvailableUpdate, String noticeAuthorNickName, String noticeAuthorImgUrl) {
             this.id = id;
             this.title = title;
             this.content = content;
             this.updatedAt = updatedAt;
             this.isAvailableUpdate = isAvailableUpdate;
+            this.noticeAuthorNickName = noticeAuthorNickName;
+            this.noticeAuthorImgUrl = noticeAuthorImgUrl;
         }
     }
 

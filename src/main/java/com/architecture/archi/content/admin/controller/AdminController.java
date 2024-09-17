@@ -77,7 +77,7 @@ public class AdminController implements AdminControllerDocs {
         return new ApiResponseModel<>(adminWriteService.updateNotice(updateNoticeReq, userDetails));
     }
 
-    // 삭제
+    // 공지사항 삭제
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/notice/delete")
     public ApiResponseModel<Boolean> deleteNotice(@RequestBody AdminModel.DeleteNoticeReq deleteNoticeReq) throws CustomException {
