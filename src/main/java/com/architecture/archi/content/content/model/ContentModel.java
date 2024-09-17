@@ -1,16 +1,16 @@
 package com.architecture.archi.content.content.model;
 
+import com.architecture.archi.common.enumobj.BooleanFlag;
 import com.architecture.archi.content.file.model.FileModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public class ContentModel {
     /*
@@ -30,13 +30,25 @@ public class ContentModel {
         private List<Long> imgFileIdList;
     }
 
+//    @Getter
+//    public static class UpdateContentReq{
+//        private Long id;
+//        private Long categoryId;
+//        private String title;
+//        private String content;
+//        private List<Long> imgFileIdList;
+//    }
+
     @Getter
+    @ToString
     public static class UpdateContentReq{
         private Long id;
         private Long categoryId;
         private String title;
         private String content;
-        private List<Long> imgFileIdList;
+        private List<Long> addFileIdList;
+        private Map<Long, String> updateFileMap;
+        private List<Long> deleteFileIdList;
     }
 
     @Getter
@@ -59,6 +71,7 @@ public class ContentModel {
     public static class ContentDto{
         private Long id;
         private String categoryName;
+        private BooleanFlag delYn;
         private String title;
         private String content;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
@@ -71,9 +84,10 @@ public class ContentModel {
         private List<FileModel.FileRes> fileList;
 
         @Builder
-        public ContentDto(Long id, String categoryName, String title, String content, LocalDateTime updatedAt, Boolean isAvailableUpdate, String contentAuthorNickName, String contentAuthorImgUrl, Long like) {
+        public ContentDto(Long id, String categoryName, BooleanFlag delYn, String title, String content, LocalDateTime updatedAt, Boolean isAvailableUpdate, String contentAuthorNickName, String contentAuthorImgUrl, Long like) {
             this.id = id;
             this.categoryName = categoryName;
+            this.delYn = delYn;
             this.title = title;
             this.content = content;
             this.updatedAt = updatedAt;

@@ -19,6 +19,8 @@ public class QFileEntity extends EntityPathBase<FileEntity> {
 
     public static final QFileEntity fileEntity = new QFileEntity("fileEntity");
 
+    public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
+
     public final StringPath ext = createString("ext");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
@@ -30,6 +32,8 @@ public class QFileEntity extends EntityPathBase<FileEntity> {
     public final StringPath path = createString("path");
 
     public final NumberPath<Long> size = createNumber("size", Long.class);
+
+    public final DateTimePath<java.time.LocalDateTime> updatedAt = createDateTime("updatedAt", java.time.LocalDateTime.class);
 
     public final StringPath url = createString("url");
 

@@ -1,5 +1,6 @@
 package com.architecture.archi.content.comment.model;
 
+import com.architecture.archi.common.enumobj.BooleanFlag;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,9 +19,9 @@ public class CommentModel {
     * */
     @Getter
     public static class AddCommentReq{
-        private Long parentId; // 0은 제일 상위 댓글
         @NotNull(message = "필수값입니다.")
         private Long contentId;
+        private Long parentId; // 0은 제일 상위 댓글
         @NotBlank(message = "필수값입니다.")
         private String comment;
     }
@@ -49,6 +50,7 @@ public class CommentModel {
     public static class CommentDto{
         private Long id;
         private String comment;
+        private BooleanFlag delYn;
         private String userNickName;
         private String commentAuthorImgUrl;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
@@ -62,9 +64,10 @@ public class CommentModel {
         private List<CommentDto> children;
 
         @Builder
-        public CommentDto(Long id, String comment, String userNickName, String commentAuthorImgUrl, LocalDateTime createdAt, LocalDateTime updatedAt, Long like, List<String> likeUserIds, Boolean isContentAuthor, Boolean isWriteUser, List<CommentDto> children) {
+        public CommentDto(Long id, String comment, BooleanFlag delYn, String userNickName, String commentAuthorImgUrl, LocalDateTime createdAt, LocalDateTime updatedAt, Long like, List<String> likeUserIds, Boolean isContentAuthor, Boolean isWriteUser, List<CommentDto> children) {
             this.id = id;
             this.comment = comment;
+            this.delYn = delYn;
             this.userNickName = userNickName;
             this.commentAuthorImgUrl = commentAuthorImgUrl;
             this.createdAt = createdAt;

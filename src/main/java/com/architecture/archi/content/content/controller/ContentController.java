@@ -9,14 +9,17 @@ import com.architecture.archi.content.content.controller.docs.ContentControllerD
 import com.architecture.archi.content.content.model.ContentModel;
 import com.architecture.archi.content.content.service.ContentReadService;
 import com.architecture.archi.content.content.service.ContentWriteService;
+import com.architecture.archi.content.file.model.FileModel;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -43,7 +46,7 @@ public class ContentController implements ContentControllerDocs {
     }
 
     // 컨텐츠 조회
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public ApiResponseModel<ContentModel.ContentDto> getContent(@PathVariable("id") Long id, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
         return new ApiResponseModel<>(contentReadService.findContent(id, userDetails));
     }
@@ -57,8 +60,19 @@ public class ContentController implements ContentControllerDocs {
     // 수정
     @PatchMapping("/update")
     public ApiResponseModel<Boolean> updateContent(@RequestBody ContentModel.UpdateContentReq updateContentReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
-        return new ApiResponseModel<>(contentWriteService.updateContent(userDetails, updateContentReq));
+        return new ApiResponseModel<>(contentWriteService.updateContent(updateContentReq, userDetails));
     }
+
+//    @PatchMapping(value = "/update/{contentId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ApiResponseModel<Boolean> updateContent(
+//            @PathVariable Long contentId,
+//            @RequestPart("data") @Valid ContentModel.UpdateContentReq updateContentReq,
+//            @RequestPart(value = "addFileList", required = false) List<MultipartFile> addFileList,
+//            @AuthenticationPrincipal CustomUserDetails userDetails
+//    ) throws CustomException {
+//        // 여기서 서비스 호출 및 업데이트 로직을 처리;
+//        return new ApiResponseModel<>(contentWriteService.updateContent(contentId, updateContentReq, addFileList, userDetails));
+//    }
 
     // 삭제
     @DeleteMapping("/delete")

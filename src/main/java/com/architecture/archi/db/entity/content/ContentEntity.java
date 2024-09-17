@@ -87,6 +87,7 @@ public class ContentEntity {
     }
 
     public void deleteContent(){
+        this.content = "삭제된 게시글 입니다.";
         this.delYn = BooleanFlag.Y;
     }
 }

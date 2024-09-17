@@ -54,11 +54,11 @@ public interface ContentControllerDocs {
     })
     public ApiResponseModel<Long> addContent(@Valid @RequestBody ContentModel.AddContentReq addContentReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
 
-    @Operation(summary = "컨텐츠 수정", description = "컨텐츠 수정 API 입니다")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "컨텐츠 수정 완료", content = @Content(schema = @Schema(implementation = Boolean.class)))
-    })
-    public ApiResponseModel<Boolean> updateContent(@RequestBody ContentModel.UpdateContentReq updateContentReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
+//    @Operation(summary = "컨텐츠 수정", description = "컨텐츠 수정 API 입니다")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "201", description = "컨텐츠 수정 완료", content = @Content(schema = @Schema(implementation = Boolean.class)))
+//    })
+//    public ApiResponseModel<Boolean> updateContent(@RequestBody ContentModel.UpdateContentReq updateContentReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
 
     @Operation(summary = "컨텐츠 삭제", description = "컨텐츠 삭제 API 입니다")
     @ApiResponses(value = {

@@ -116,6 +116,7 @@ public class SecurityConfig  {
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/user/init-password")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/content/list/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/v1/content/get/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/comment/list/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/index.html")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/login/**")).permitAll()

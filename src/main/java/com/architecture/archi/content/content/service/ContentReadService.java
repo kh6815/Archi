@@ -51,12 +51,19 @@ public class ContentReadService {
             contentAuthorImgUrl = userFileEntityOptional.get().getFile().getUrl();
         }
 
+        boolean isAvailableUpdate = false;
+
+        if(userDetails != null){
+            isAvailableUpdate = contentEntity.getUser().getId().equals(userDetails.getUsername());
+        }
+
         ContentModel.ContentDto response = ContentModel.ContentDto.builder()
                 .id(contentEntity.getId())
                 .title(contentEntity.getTitle())
+                .delYn(contentEntity.getDelYn())
                 .content(contentEntity.getContent())
                 .categoryName(contentEntity.getCategory().getCategoryName())
-                .isAvailableUpdate(contentEntity.getUser().getId().equals(userDetails.getUsername()))
+                .isAvailableUpdate(isAvailableUpdate)
                 .updatedAt(contentEntity.getUpdatedAt())
                 .like((long) contentEntity.getContentLikes().size())
                 .contentAuthorNickName(contentEntity.getUser().getNickName())

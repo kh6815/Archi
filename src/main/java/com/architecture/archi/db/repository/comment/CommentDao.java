@@ -136,6 +136,7 @@ public class CommentDao {
         return CommentModel.CommentDto.builder()
                 .id(commentEntity.getId())
                 .comment(commentEntity.getComment())
+                .delYn(commentEntity.getDelYn())
                 .userNickName(commentEntity.getUser().getNickName())
                 .commentAuthorImgUrl(parentUserFileUrlList.getOrDefault(commentEntity.getUser().getId(), null))
                 .createdAt(commentEntity.getCreatedAt())

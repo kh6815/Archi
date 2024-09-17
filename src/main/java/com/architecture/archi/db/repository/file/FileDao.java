@@ -96,4 +96,18 @@ public class FileDao {
                         userFileEntity -> userFileEntity.getFile().getUrl()
                 ));
     }
+
+    public List<FileEntity> findAddFileListByFileIds(List<Long> fileIds){
+        return jpaQueryFactory
+                .selectFrom(qFileEntity)
+                .where(qFileEntity.id.in(fileIds))
+                .fetch();
+    }
+
+    public List<FileEntity> findFileListByFileIds(List<Long> fileIds){
+        return jpaQueryFactory
+                .selectFrom(qFileEntity)
+                .where(qFileEntity.id.in(fileIds))
+                .fetch();
+    }
 }

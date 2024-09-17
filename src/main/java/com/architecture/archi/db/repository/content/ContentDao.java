@@ -164,21 +164,38 @@ public class ContentDao {
     public Map<Long, ContentFileEntity> findSingleContentFileByContentIds(List<Long> contentIds) throws CustomException {
         QContentFileEntity qContentFileEntity2 = new QContentFileEntity("qContentFileEntity2");
 
+//        List<ContentFileEntity> contentFileEntities = Optional.ofNullable(
+//                        jpaQueryFactory
+//                                .selectFrom(qContentFileEntity)
+//                                .leftJoin(qContentFileEntity.file, qFileEntity).fetchJoin()
+//                                .where(qContentFileEntity.id.in(
+//                                        JPAExpressions.select(qContentFileEntity2.id)
+//                                        .from(qContentFileEntity2)
+//                                        .where(qContentFileEntity2.content.id.in(contentIds)
+//                                                .and(qContentFileEntity2.delYn.eq(BooleanFlag.N)))
+//                                        .groupBy(qContentFileEntity2.content.id))
+//                                )
+//                                .fetch()
+//                )
+//                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "not found"));
+
         List<ContentFileEntity> contentFileEntities = Optional.ofNullable(
                         jpaQueryFactory
                                 .selectFrom(qContentFileEntity)
                                 .leftJoin(qContentFileEntity.file, qFileEntity).fetchJoin()
                                 .where(qContentFileEntity.id.in(
-                                        JPAExpressions.select(qContentFileEntity2.id.min())
-                                        .from(qContentFileEntity2)
-                                        .where(qContentFileEntity2.content.id.in(contentIds))
-                                        .groupBy(qContentFileEntity2.content.id))
+                                        JPAExpressions.select(qContentFileEntity2.id)
+                                                .from(qContentFileEntity2)
+                                                .where(qContentFileEntity2.content.id.in(contentIds)
+                                                        .and(qContentFileEntity2.delYn.eq(BooleanFlag.N)))
+                                                .groupBy(qContentFileEntity2.content.id))
                                 )
+                                .where(qFileEntity.originName.contains("image0"))
                                 .fetch()
                 )
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "not found"));
 
-        // 각 contentId에 대해 하나의 ContentFileEntity만 반환
+//        // 각 contentId에 대해 하나의 ContentFileEntity만 반환
         return contentFileEntities.stream()
                 .collect(Collectors.toMap(
                         contentFileEntity -> contentFileEntity.getContent().getId(),
@@ -367,5 +384,25 @@ public class ContentDao {
 
                 )
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, String.format("Notice [%s] is null", id)));
+    }
+
+    public List<ContentFileEntity> findContentFileWithFileByFileIds(List<Long> fileIds) throws CustomException{
+        return
+                Optional.ofNullable(
+                                jpaQueryFactory
+                                        .selectFrom(qContentFileEntity)
+//                                        .leftJoin(qContentFileEntity.file, qFileEntity).fetchJoin()
+                                        .where(qContentFileEntity.file.id.in(fileIds))
+                                        .fetch()
+                        )
+                        .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "해당하는 데이터가 없습니다."));
+    }
+
+    public long updateDelYnContentFileListByContentIds(List<Long> contentIds) {
+        return jpaQueryFactory
+                .update(qContentFileEntity)
+                .set(qContentFileEntity.delYn, BooleanFlag.Y)
+                .where(qContentFileEntity.id.in(contentIds))
+                .execute();
     }
 }
