@@ -8,7 +8,9 @@ import com.architecture.archi.config.security.JwtUtils;
 import com.architecture.archi.content.auth.model.AuthModel;
 import com.architecture.archi.db.entity.auth.TokenPairEntity;
 import com.architecture.archi.db.entity.user.UserEntity;
+import com.architecture.archi.db.entity.user.UserFileEntity;
 import com.architecture.archi.db.repository.auth.TokenPairRepository;
+import com.architecture.archi.db.repository.user.UserDao;
 import com.architecture.archi.db.repository.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.StringUtils;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -26,6 +30,7 @@ public class AuthService {
     private final JwtUtils jwtUtils;
     private final TokenPairRepository tokenPairRepository;
     private final UserRepository userRepository;
+    private final UserDao userDao;
 
     @Qualifier("refreshTokenRedisTemplate")
     private final RedisTemplate<String, Object> refreshTokenRedisTemplate;
@@ -81,11 +86,20 @@ public class AuthService {
 
         jwtUtils.setRedisAuthToken(user.getId(), refresh);
 
+        Optional<UserFileEntity> userFileEntity = userDao.findUserFileWithFileByUserId(user.getId());
+        String userImgUrl = null;
+
+        if(userFileEntity.isPresent()){
+            userImgUrl = userFileEntity.get().getFile().getUrl();
+        }
+
         AuthModel.AuthLoginRes result = new AuthModel.AuthLoginRes();
         result.setId(user.getId());
         result.setAccessToken(jwtUtils.addPrefix(jwt));
         result.setRefreshToken(jwtUtils.addPrefix(refresh));
         result.setRole(user.getRole());
+        result.setImgUrl(userImgUrl);
+        result.setNickName(user.getNickName());
 
         return new ApiResponseModel<>(result);
     }
@@ -161,12 +175,21 @@ public class AuthService {
             // redis에 새로운 refreshToken 생성
             jwtUtils.setRedisAuthToken(userId, refresh);
 
+            Optional<UserFileEntity> userFileEntity = userDao.findUserFileWithFileByUserId(user.getId());
+            String userImgUrl = null;
+
+            if(userFileEntity.isPresent()){
+                userImgUrl = userFileEntity.get().getFile().getUrl();
+            }
+
 //            AuthModel.AuthResponse result = principal.getUser().getUserInfo();
             AuthModel.AuthLoginRes result = new AuthModel.AuthLoginRes();
             result.setId(user.getId());
             result.setAccessToken(jwtUtils.addPrefix(jwt));
             result.setRefreshToken(jwtUtils.addPrefix(refresh));
             result.setRole(user.getRole());
+            result.setImgUrl(userImgUrl);
+            result.setNickName(user.getNickName());
             return new ApiResponseModel<>(result);
 
         } else {

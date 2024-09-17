@@ -29,5 +29,7 @@ public class AuthModel {
         private String accessToken;
         private String refreshToken;
         private RoleType role;
+        private String imgUrl;
+        private String nickName;
     }
 }
