@@ -86,6 +86,7 @@ public class ContentController implements ContentControllerDocs {
         return new ApiResponseModel<>(contentWriteService.updateLike(updateContentLikeReq, userDetails));
     }
 
+    // 카테고리 리스트 조회
     @GetMapping("/list/category")
     public ApiResponseModel<AdminModel.GetCategoryRes> getCategory() throws CustomException {
         try{

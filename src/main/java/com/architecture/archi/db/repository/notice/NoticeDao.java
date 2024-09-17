@@ -3,7 +3,6 @@ package com.architecture.archi.db.repository.notice;
 import com.architecture.archi.common.enumobj.BooleanFlag;
 import com.architecture.archi.common.error.CustomException;
 import com.architecture.archi.common.error.ExceptionCode;
-import com.architecture.archi.content.content.model.ContentModel;
 import com.architecture.archi.db.entity.category.QCategoryEntity;
 import com.architecture.archi.db.entity.content.*;
 import com.architecture.archi.db.entity.file.QFileEntity;
@@ -13,21 +12,14 @@ import com.architecture.archi.db.entity.notice.NoticeFileEntity;
 import com.architecture.archi.db.entity.notice.QNoticeEntity;
 import com.architecture.archi.db.entity.notice.QNoticeFileEntity;
 import com.architecture.archi.db.entity.user.QUserEntity;
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Repository
@@ -86,5 +78,24 @@ public class NoticeDao {
                                         .fetch()
                         )
                         .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "해당하는 데이터가 없습니다."));
+    }
+
+    public List<NoticeFileEntity> findNoticeFileByFileIds(List<Long> fileIds) throws CustomException{
+        return
+                Optional.ofNullable(
+                                jpaQueryFactory
+                                        .selectFrom(qNoticeFileEntity)
+                                        .where(qNoticeFileEntity.file.id.in(fileIds))
+                                        .fetch()
+                        )
+                        .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "해당하는 데이터가 없습니다."));
+    }
+
+    public void updateDelYnContentNoticeListByNoticeIds(List<Long> noticeIds) {
+        jpaQueryFactory
+                .update(qNoticeFileEntity)
+                .set(qNoticeFileEntity.delYn, BooleanFlag.Y)
+                .where(qNoticeFileEntity.id.in(noticeIds))
+                .execute();
     }
 }

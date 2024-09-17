@@ -205,7 +205,7 @@ public class ContentWriteService {
 
         // 이미지 추가 하고
         if(!updateContentReq.getAddFileIdList().isEmpty()){
-            List<FileEntity> saveFileList = fileDao.findAddFileListByFileIds(updateContentReq.getAddFileIdList());
+            List<FileEntity> saveFileList = fileDao.findFileListByFileIds(updateContentReq.getAddFileIdList());
 
             List<ContentFileEntity> willSaveContentFileEntityList = new ArrayList<>();
             for (FileEntity file : saveFileList) {
@@ -233,7 +233,7 @@ public class ContentWriteService {
 
         // 이미지 삭제 하고 -> contentFileEntity만 delYn = Y처리하고 나중에 배치서버에서 contentFile, file, a3 모두 삭제
         if(!updateContentReq.getDeleteFileIdList().isEmpty()){
-            List<ContentFileEntity> deleteContentFileEntityList = contentDao.findContentFileWithFileByFileIds(updateContentReq.getDeleteFileIdList());
+            List<ContentFileEntity> deleteContentFileEntityList = contentDao.findContentFileByFileIds(updateContentReq.getDeleteFileIdList());
 
             contentDao.updateDelYnContentFileListByContentIds(deleteContentFileEntityList.stream()
                     .map(ContentFileEntity::getId)

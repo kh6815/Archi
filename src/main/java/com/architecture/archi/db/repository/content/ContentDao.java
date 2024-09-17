@@ -5,7 +5,6 @@ import com.architecture.archi.common.error.CustomException;
 import com.architecture.archi.common.error.ExceptionCode;
 import com.architecture.archi.content.content.model.ContentModel;
 import com.architecture.archi.db.entity.category.QCategoryEntity;
-import com.architecture.archi.db.entity.comment.QCommentEntity;
 import com.architecture.archi.db.entity.content.*;
 import com.architecture.archi.db.entity.file.FileEntity;
 import com.architecture.archi.db.entity.file.QFileEntity;
@@ -15,33 +14,23 @@ import com.architecture.archi.db.entity.notice.NoticeFileEntity;
 import com.architecture.archi.db.entity.notice.QNoticeEntity;
 import com.architecture.archi.db.entity.notice.QNoticeFileEntity;
 import com.architecture.archi.db.entity.user.QUserEntity;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.QueryResults;
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.sql.ComparisonRestriction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.types.ExpressionUtils.count;
 
 @RequiredArgsConstructor
 @Repository
@@ -386,20 +375,19 @@ public class ContentDao {
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, String.format("Notice [%s] is null", id)));
     }
 
-    public List<ContentFileEntity> findContentFileWithFileByFileIds(List<Long> fileIds) throws CustomException{
+    public List<ContentFileEntity> findContentFileByFileIds(List<Long> fileIds) throws CustomException{
         return
                 Optional.ofNullable(
                                 jpaQueryFactory
                                         .selectFrom(qContentFileEntity)
-//                                        .leftJoin(qContentFileEntity.file, qFileEntity).fetchJoin()
                                         .where(qContentFileEntity.file.id.in(fileIds))
                                         .fetch()
                         )
                         .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "해당하는 데이터가 없습니다."));
     }
 
-    public long updateDelYnContentFileListByContentIds(List<Long> contentIds) {
-        return jpaQueryFactory
+    public void updateDelYnContentFileListByContentIds(List<Long> contentIds) {
+        jpaQueryFactory
                 .update(qContentFileEntity)
                 .set(qContentFileEntity.delYn, BooleanFlag.Y)
                 .where(qContentFileEntity.id.in(contentIds))

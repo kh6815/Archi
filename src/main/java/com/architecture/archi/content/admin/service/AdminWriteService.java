@@ -14,6 +14,7 @@ import com.architecture.archi.db.entity.notice.NoticeEntity;
 import com.architecture.archi.db.entity.notice.NoticeFileEntity;
 import com.architecture.archi.db.entity.user.UserEntity;
 import com.architecture.archi.db.repository.category.CategoryRepository;
+import com.architecture.archi.db.repository.file.FileDao;
 import com.architecture.archi.db.repository.file.FileRepository;
 import com.architecture.archi.db.repository.notice.NoticeDao;
 import com.architecture.archi.db.repository.notice.NoticeFileRepository;
@@ -40,6 +41,7 @@ public class AdminWriteService {
     private final NoticeFileRepository noticeFileRepository;
     private final FileRepository fileRepository;
     private final NoticeDao noticeDao;
+    private final FileDao fileDao;
 
     @Transactional(rollbackFor = Exception.class)
     public Boolean createCategory(AdminModel.AddCategoryReq addCategoryReq, CustomUserDetails userDetails) throws CustomException {
@@ -121,6 +123,43 @@ public class AdminWriteService {
             throw new CustomException(ExceptionCode.INVALID, "작성자가 아닌 사람은 게시글을 업데이트 할 수 없습니다.");
         }
 
+        // 이미지 추가 하고
+        if(!updateNoticeReq.getAddFileIdList().isEmpty()){
+            List<FileEntity> saveFileList = fileDao.findFileListByFileIds(updateNoticeReq.getAddFileIdList());
+
+            List<NoticeFileEntity> willSaveNoticeFileEntityList = new ArrayList<>();
+            for (FileEntity file : saveFileList) {
+                willSaveNoticeFileEntityList.add(NoticeFileEntity.builder()
+                        .notice(noticeEntity)
+                        .file(file)
+                        .build());
+            }
+
+            noticeFileRepository.saveAll(willSaveNoticeFileEntityList);
+        }
+
+        // 이미지 업데이트 하고
+        if(!updateNoticeReq.getUpdateFileMap().isEmpty()){
+            List<Long> updateFileIdList = new ArrayList<>(updateNoticeReq.getUpdateFileMap().keySet());
+
+
+            List<FileEntity> findUpdateFileEntityList = fileDao.findFileListByFileIds(updateFileIdList);
+
+            for (FileEntity fileEntity : findUpdateFileEntityList) {
+                fileEntity.updateName(updateNoticeReq.getUpdateFileMap().get(fileEntity.getId()));
+            }
+        }
+
+        // 이미지 삭제 하고 -> noticeFileEntity만 delYn = Y처리하고 나중에 배치서버에서 noticeFile, file, a3 모두 삭제
+        if(!updateNoticeReq.getDeleteFileIdList().isEmpty()){
+            List<NoticeFileEntity> deleteNoticeFileEntityList = noticeDao.findNoticeFileByFileIds(updateNoticeReq.getDeleteFileIdList());
+
+            noticeDao.updateDelYnContentNoticeListByNoticeIds(deleteNoticeFileEntityList.stream()
+                    .map(NoticeFileEntity::getId)
+                    .toList());
+        }
+
+
         String newTitle = noticeEntity.getTitle();
         String newContent = noticeEntity.getContent();
 
@@ -133,45 +172,6 @@ public class AdminWriteService {
         }
 
         noticeEntity.updateContent(newTitle, newContent);
-
-
-        // getImgFileIdList에서 추가된거는 ContentFileEntity를 만들어서 saveAll하고, 지워진 거는 ContentFileEntity를 비활성화하는 로직
-        List<NoticeFileEntity> noticeFileEntityList = noticeDao.findNoticeFileByNoticeId(noticeEntity.getId());
-        List<Long> existingFileIds = noticeFileEntityList.stream().map(NoticeFileEntity::getId).toList();
-        List<Long> newFileIds = updateNoticeReq.getImgFileIdList();
-
-        // 추가된 ID 리스트
-        List<Long> addedFileIds = newFileIds.stream()
-                .filter(id -> !existingFileIds.contains(id))
-                .collect(Collectors.toList());
-
-        // 삭제된 ContentFileEntity 리스트
-        List<NoticeFileEntity> removedNoticeFileEntity = noticeFileEntityList.stream()
-                .filter(id -> !newFileIds.contains(id))
-                .toList();
-
-
-        if(!addedFileIds.isEmpty()){
-
-            List<NoticeFileEntity> newNoticeFileEntityList = new ArrayList<>();
-            List<FileEntity> fileEntityList = fileRepository.findByIdIn(addedFileIds);
-
-            for (FileEntity fileEntity : fileEntityList) {
-                newNoticeFileEntityList.add(NoticeFileEntity.builder()
-                        .notice(noticeEntity)
-                        .file(fileEntity)
-                        .build());
-            }
-
-            noticeFileRepository.saveAll(newNoticeFileEntityList);
-        }
-
-        if(!removedNoticeFileEntity.isEmpty()) {
-            // removedFileIds에 포함되는 해당하는 contentFile 모두 비활성화
-            removedNoticeFileEntity.forEach(NoticeFileEntity::delete);
-            noticeFileRepository.saveAll(removedNoticeFileEntity);
-        }
-
         return true;
     }
 

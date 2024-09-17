@@ -11,6 +11,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public class AdminModel {
     /*
@@ -46,7 +47,9 @@ public class AdminModel {
         private Long id;
         private String title;
         private String content;
-        private List<Long> imgFileIdList;
+        private List<Long> addFileIdList;
+        private Map<Long, String> updateFileMap;
+        private List<Long> deleteFileIdList;
     }
 
     @Getter
