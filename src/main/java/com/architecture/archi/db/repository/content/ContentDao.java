@@ -5,6 +5,7 @@ import com.architecture.archi.common.error.CustomException;
 import com.architecture.archi.common.error.ExceptionCode;
 import com.architecture.archi.content.content.model.ContentModel;
 import com.architecture.archi.db.entity.category.QCategoryEntity;
+import com.architecture.archi.db.entity.comment.CommentEntity;
 import com.architecture.archi.db.entity.content.*;
 import com.architecture.archi.db.entity.file.FileEntity;
 import com.architecture.archi.db.entity.file.QFileEntity;
@@ -55,57 +56,72 @@ public class ContentDao {
 
     private final QNoticeFileEntity qNoticeFileEntity = QNoticeFileEntity.noticeFileEntity;
 
-
-    public Page<ContentModel.ContentListDto> findContentPages(Long categoryId, Pageable pageable) throws Exception {
-
-        List<ContentModel.ContentListDto> contentListDtoList = jpaQueryFactory
-                .select(
-                        Projections.constructor(ContentModel.ContentListDto.class,
-                        qContentEntity.id,
-                                qContentEntity.category.categoryName,
-                                qContentEntity.title,
-                                qContentEntity.content,
-                                qContentEntity.updatedAt,
-                                // 서브쿼리를 사용하여 해당 content의 좋아요 수를 계산
-                                JPAExpressions
-                                        .select(qContentLikeEntity.count())
-                                        .from(qContentLikeEntity)
-                                        .where(qContentLikeEntity.content.id.eq(qContentEntity.id))
-                        )
+    public List<ContentEntity> findContents(List<Long> ids) throws CustomException {
+        return Optional.ofNullable(
+                        jpaQueryFactory
+                                .selectFrom(qContentEntity)
+                                .leftJoin(qContentEntity.user, qUserEntity).fetchJoin()
+                                .where(qContentEntity.id.in(ids))
+                                .fetch()
 
                 )
-                .from(qContentEntity)
-                .where(
-                        qContentEntity.delYn.eq(BooleanFlag.N)
-                                .and(dynamicContentCategoryBuilder(categoryId))
-                )
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .orderBy(qContentEntity.createdAt.desc())
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, String.format("Contents is null")));
+    }
+
+    public Page<ContentModel.ContentListDto> findContentPages(Long categoryId, Pageable pageable) throws CustomException {
+        try{
+            List<ContentModel.ContentListDto> contentListDtoList = jpaQueryFactory
+                    .select(
+                            Projections.constructor(ContentModel.ContentListDto.class,
+                                    qContentEntity.id,
+                                    qContentEntity.category.categoryName,
+                                    qContentEntity.title,
+                                    qContentEntity.content,
+                                    qContentEntity.updatedAt,
+                                    // 서브쿼리를 사용하여 해당 content의 좋아요 수를 계산
+                                    JPAExpressions
+                                            .select(qContentLikeEntity.count())
+                                            .from(qContentLikeEntity)
+                                            .where(qContentLikeEntity.content.id.eq(qContentEntity.id))
+                            )
+
+                    )
+                    .from(qContentEntity)
+                    .where(
+                            qContentEntity.delYn.eq(BooleanFlag.N)
+                                    .and(dynamicContentCategoryBuilder(categoryId))
+                    )
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .orderBy(qContentEntity.createdAt.desc())
 //                .distinct()
-                .fetch();
+                    .fetch();
 
-        List<Long> contentIds = contentListDtoList.stream()
-                .map(ContentModel.ContentListDto::getId)
-                .toList();
+            List<Long> contentIds = contentListDtoList.stream()
+                    .map(ContentModel.ContentListDto::getId)
+                    .toList();
 
-        Map<Long, ContentFileEntity> contentFileEntityMap = findSingleContentFileByContentIds(contentIds);
+            Map<Long, ContentFileEntity> contentFileEntityMap = findSingleContentFileByContentIds(contentIds);
 
-        for (ContentModel.ContentListDto contentListDto : contentListDtoList) {
-            if(contentFileEntityMap.containsKey(contentListDto.getId())){
-                FileEntity file = contentFileEntityMap.get(contentListDto.getId()).getFile();
-                contentListDto.setImgUrl(file.getUrl());
+            for (ContentModel.ContentListDto contentListDto : contentListDtoList) {
+                if(contentFileEntityMap.containsKey(contentListDto.getId())){
+                    FileEntity file = contentFileEntityMap.get(contentListDto.getId()).getFile();
+                    contentListDto.setImgUrl(file.getUrl());
+                }
             }
-        }
 
-        long total = jpaQueryFactory
-                .selectFrom(qContentEntity)
-                .where(
-                        qContentEntity.delYn.eq(BooleanFlag.N)
-                                .and(dynamicContentCategoryBuilder(categoryId))
-                )
-                .stream().count();
-        return new PageImpl<>(contentListDtoList, pageable, total);
+            long total = jpaQueryFactory
+                    .selectFrom(qContentEntity)
+                    .where(
+                            qContentEntity.delYn.eq(BooleanFlag.N)
+                                    .and(dynamicContentCategoryBuilder(categoryId))
+                    )
+                    .stream().count();
+            return new PageImpl<>(contentListDtoList, pageable, total);
+        }
+        catch(Exception e){
+            throw new CustomException(ExceptionCode.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
     }
 
     public ContentEntity findContent(Long id) throws CustomException {
@@ -394,5 +410,60 @@ public class ContentDao {
                 .set(qContentFileEntity.delYn, BooleanFlag.Y)
                 .where(qContentFileEntity.id.in(contentIds))
                 .execute();
+    }
+
+    public Page<ContentModel.ContentListDto> findUserContentPages(String userId, Pageable pageable) throws CustomException {
+        try{
+            List<ContentModel.ContentListDto> contentListDtoList = jpaQueryFactory
+                    .select(
+                            Projections.constructor(ContentModel.ContentListDto.class,
+                                    qContentEntity.id,
+                                    qContentEntity.category.categoryName,
+                                    qContentEntity.title,
+                                    qContentEntity.content,
+                                    qContentEntity.updatedAt,
+                                    // 서브쿼리를 사용하여 해당 content의 좋아요 수를 계산
+                                    JPAExpressions
+                                            .select(qContentLikeEntity.count())
+                                            .from(qContentLikeEntity)
+                                            .where(qContentLikeEntity.content.id.eq(qContentEntity.id))
+                            )
+
+                    )
+                    .from(qContentEntity)
+                    .where(
+                            qContentEntity.delYn.eq(BooleanFlag.N)
+                                    .and(qContentEntity.user.id.eq(userId))
+                    )
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .orderBy(qContentEntity.createdAt.desc())
+//                .distinct()
+                    .fetch();
+
+            List<Long> contentIds = contentListDtoList.stream()
+                    .map(ContentModel.ContentListDto::getId)
+                    .toList();
+
+            Map<Long, ContentFileEntity> contentFileEntityMap = findSingleContentFileByContentIds(contentIds);
+
+            for (ContentModel.ContentListDto contentListDto : contentListDtoList) {
+                if(contentFileEntityMap.containsKey(contentListDto.getId())){
+                    FileEntity file = contentFileEntityMap.get(contentListDto.getId()).getFile();
+                    contentListDto.setImgUrl(file.getUrl());
+                }
+            }
+
+            long total = jpaQueryFactory
+                    .selectFrom(qContentEntity)
+                    .where(
+                            qContentEntity.delYn.eq(BooleanFlag.N)
+                                    .and(qContentEntity.user.id.eq(userId))
+                    )
+                    .stream().count();
+            return new PageImpl<>(contentListDtoList, pageable, total);
+        } catch(Exception e){
+            throw new CustomException(ExceptionCode.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
     }
 }

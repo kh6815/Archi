@@ -115,7 +115,7 @@ public class ContentReadService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Page<ContentModel.ContentListDto> findContents(Long categoryId, Pageable pageable) throws Exception {
+    public Page<ContentModel.ContentListDto> findContents(Long categoryId, Pageable pageable) throws CustomException {
         return contentDao.findContentPages(categoryId, pageable);
     }
 
@@ -136,9 +136,6 @@ public class ContentReadService {
             isAvailableUpdate = noticeEntity.getUser().getId().equals(userDetails.getUsername());
         }
 
-        System.out.println("noticeEntity.getUser().getId() = " + noticeEntity.getUser().getId());
-        System.out.println("userDetails.getUsername() = " + userDetails.getUsername());
-
         ContentModel.NoticeDto response = ContentModel.NoticeDto.builder()
                 .id(noticeEntity.getId())
                 .title(noticeEntity.getTitle())
@@ -156,5 +153,10 @@ public class ContentReadService {
     @Transactional(rollbackFor = Exception.class)
     public List<ContentModel.NoticeListDto> findNotices() throws Exception {
         return contentDao.findNoticeList();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Page<ContentModel.ContentListDto> findUserContents(CustomUserDetails userDetails, Pageable pageable) throws CustomException {
+        return contentDao.findUserContentPages(userDetails.getUsername(), pageable);
     }
 }

@@ -21,6 +21,10 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.xml.stream.events.Comment;
@@ -30,6 +34,7 @@ import java.util.stream.Collectors;
 import static com.querydsl.core.group.GroupBy.groupBy;
 
 @RequiredArgsConstructor
+@Slf4j
 @Repository
 public class CommentDao {
 
@@ -54,6 +59,18 @@ public class CommentDao {
 
                 )
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, String.format("Comment [%s] is null", id)));
+    }
+
+    public List<CommentEntity> findComments(List<Long> ids) throws CustomException {
+        return Optional.ofNullable(
+                        jpaQueryFactory
+                                .selectFrom(qCommentEntity)
+                                .leftJoin(qCommentEntity.user, qUserEntity).fetchJoin()
+                                .where(qCommentEntity.id.in(ids))
+                                .fetch()
+
+                )
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, String.format("Comments is null")));
     }
 
     public List<CommentModel.CommentDto> findCommentsByContent(Long contentId, String userId) {
@@ -168,4 +185,47 @@ public class CommentDao {
 //                .where(qCommentEntity.id.eq(commentId))
 //                .execute();
 //    }
+
+    public Page<CommentModel.UserCommentDto> findUserCommentsPagingByUserId(String userId, Pageable pageable) throws CustomException {
+        try{
+            List<CommentModel.UserCommentDto> commentListDtoList = jpaQueryFactory
+                    .select(
+                            Projections.constructor(CommentModel.UserCommentDto.class,
+                                    qCommentEntity.id,
+                                    qCommentEntity.content.id,
+                                    qCommentEntity.content.title,
+                                    qCommentEntity.comment,
+                                    qCommentEntity.createdAt,
+                                    qCommentEntity.updatedAt,
+                                    // 서브쿼리를 사용하여 해당 content의 좋아요 수를 계산
+                                    JPAExpressions
+                                            .select(qCommentLikeEntity.count())
+                                            .from(qCommentLikeEntity)
+                                            .where(qCommentLikeEntity.comment.id.eq(qCommentEntity.id))
+                            )
+
+                    )
+                    .from(qCommentEntity)
+                    .where(
+                            qCommentEntity.delYn.eq(BooleanFlag.N)
+                                    .and(qCommentEntity.user.id.eq(userId))
+                    )
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .orderBy(qCommentEntity.createdAt.desc())
+                    .fetch();
+
+            long total = jpaQueryFactory
+                    .selectFrom(qCommentEntity)
+                    .where(
+                            qCommentEntity.delYn.eq(BooleanFlag.N)
+                                    .and(qCommentEntity.user.id.eq(userId))
+                    )
+                    .stream().count();
+            return new PageImpl<>(commentListDtoList, pageable, total);
+        } catch(Exception e){
+            log.error(e.getMessage());
+            throw new CustomException(ExceptionCode.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
 }

@@ -45,13 +45,10 @@ public interface CommentControllerDocs {
     public ApiResponseModel<Boolean> updateComment(@Valid @RequestBody CommentModel.UpdateCommentReq updateCommentReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
 
     @Operation(summary = "코멘트 삭제", description = "코멘트 삭제 API 입니다")
-    @Parameters(value = {
-            @Parameter(name = "id", description = "삭제할 코멘트 아이디 입니다.", required = true),
-    })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "조회 완료", content = @Content(schema = @Schema(implementation = Boolean.class)))
     })
-    public ApiResponseModel<Boolean> deleteComment(@PathVariable("id") Long commentId, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
+    public ApiResponseModel<Boolean> deleteComment(@RequestBody CommentModel.DeleteCommentReq deleteCommentReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
 
     @Operation(summary = "코멘트 좋아요 클릭", description = "코멘트 좋아요 클릭 API 입니다")
     @ApiResponses(value = {

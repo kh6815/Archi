@@ -64,7 +64,7 @@ public interface ContentControllerDocs {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "컨텐츠 삭제 완료", content = @Content(schema = @Schema(implementation = Boolean.class)))
     })
-    public ApiResponseModel<Boolean> deleteContent(@RequestBody ContentModel.DeleteContentReq deleteContentReq) throws CustomException;
+    public ApiResponseModel<Boolean> deleteContent(@RequestBody ContentModel.DeleteContentReq deleteContentReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
 
     @Operation(summary = "카테고리 조회", description = "카테고리 조회 API 입니다")
     @ApiResponses(value = {

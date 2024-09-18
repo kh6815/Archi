@@ -35,7 +35,7 @@ public class ContentController implements ContentControllerDocs {
 
     // 컨텐츠 리스트 조회 - page 적용
     @GetMapping("/list/{categoryId}")
-    public ApiResponseModel<Page<ContentModel.ContentListDto>> getContents(@PathVariable("categoryId") Long categoryId, Pageable pageable) throws Exception {
+    public ApiResponseModel<Page<ContentModel.ContentListDto>> getContents(@PathVariable("categoryId") Long categoryId, Pageable pageable) throws CustomException {
         return new ApiResponseModel<>(contentReadService.findContents(categoryId, pageable));
     }
 
@@ -76,8 +76,8 @@ public class ContentController implements ContentControllerDocs {
 
     // 삭제
     @DeleteMapping("/delete")
-    public ApiResponseModel<Boolean> deleteContent(@RequestBody ContentModel.DeleteContentReq deleteContentReq) throws CustomException {
-        return new ApiResponseModel<>(contentWriteService.deleteContent(deleteContentReq));
+    public ApiResponseModel<Boolean> deleteContent(@RequestBody ContentModel.DeleteContentReq deleteContentReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
+        return new ApiResponseModel<>(contentWriteService.deleteContent(deleteContentReq, userDetails));
     }
 
     // like 로직 만들기 -> 조회 할때나 삭제할때 like 필드 같이 지우기
@@ -107,5 +107,11 @@ public class ContentController implements ContentControllerDocs {
     @GetMapping("/get/notice/{id}")
     public ApiResponseModel<ContentModel.NoticeDto> getNotice(@PathVariable("id") Long id, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
         return new ApiResponseModel<>(contentReadService.findNotice(id, userDetails));
+    }
+
+    // 내가 쓴글 조회
+    @GetMapping("/user/list/content")
+    public ApiResponseModel<Page<ContentModel.ContentListDto>> getUserContents(@AuthenticationPrincipal CustomUserDetails userDetails, Pageable pageable) throws CustomException {
+        return new ApiResponseModel<>(contentReadService.findUserContents(userDetails, pageable));
     }
 }

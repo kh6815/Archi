@@ -7,6 +7,7 @@ import com.architecture.archi.content.comment.model.CommentModel;
 import com.architecture.archi.content.content.model.ContentModel;
 import com.architecture.archi.db.entity.comment.CommentEntity;
 import com.architecture.archi.db.entity.content.ContentEntity;
+import com.architecture.archi.db.entity.content.ContentFileEntity;
 import com.architecture.archi.db.entity.like.CommentLikeEntity;
 import com.architecture.archi.db.entity.like.ContentLikeEntity;
 import com.architecture.archi.db.entity.user.UserEntity;
@@ -20,7 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+
+import static com.architecture.archi.db.entity.comment.QCommentEntity.commentEntity;
 
 @Slf4j
 @Service
@@ -71,14 +75,18 @@ public class CommentWriteService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Boolean deleteComment(Long id, CustomUserDetails userDetails) throws CustomException {
-        CommentEntity commentEntity = commentDao.findComment(id);
+    public Boolean deleteComment(CommentModel.DeleteCommentReq deleteCommentReq, CustomUserDetails userDetails) throws CustomException {
+        List<CommentEntity> commentEntityList = commentDao.findComments(deleteCommentReq.getIds());
 
-        if(!userDetails.getUsername().equals(commentEntity.getUser().getId())){
-            throw new CustomException(ExceptionCode.INVALID, "댓글 작성자가 아니면 삭제할 수 없습니다.");
+        for (CommentEntity comment : commentEntityList) {
+            if(!userDetails.getUsername().equals(comment.getUser().getId())){
+                throw new CustomException(ExceptionCode.INVALID, "댓글 작성자가 아니면 삭제할 수 없습니다.");
+            }
+
+            comment.deleteComment();
         }
 
-        commentEntity.deleteComment();
+        commentRepository.saveAll(commentEntityList);
         return true;
     }
 

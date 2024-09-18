@@ -7,9 +7,12 @@ import com.architecture.archi.content.comment.controller.docs.CommentControllerD
 import com.architecture.archi.content.comment.model.CommentModel;
 import com.architecture.archi.content.comment.service.CommentReadService;
 import com.architecture.archi.content.comment.service.CommentWriteService;
+import com.architecture.archi.content.content.model.ContentModel;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,13 +44,19 @@ public class CommentController implements CommentControllerDocs {
         return new ApiResponseModel<>(commentWriteService.updateComment(updateCommentReq, userDetails));
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ApiResponseModel<Boolean> deleteComment(@PathVariable("id") Long commentId, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
-        return new ApiResponseModel<>(commentWriteService.deleteComment(commentId, userDetails));
+    @DeleteMapping("/delete")
+    public ApiResponseModel<Boolean> deleteComment(@RequestBody CommentModel.DeleteCommentReq deleteCommentReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
+        return new ApiResponseModel<>(commentWriteService.deleteComment(deleteCommentReq, userDetails));
     }
 
     @PostMapping("/like")
     public ApiResponseModel<Boolean> clickLike(@RequestBody CommentModel.UpdateCommentLikeReq updateCommentLikeReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
         return new ApiResponseModel<>(commentWriteService.updateLike(updateCommentLikeReq, userDetails));
+    }
+
+    // 내가 쓴 댓글 조회
+    @GetMapping("/user/list/comment")
+    public ApiResponseModel<Page<CommentModel.UserCommentDto>> getUserComments(@AuthenticationPrincipal CustomUserDetails userDetails, Pageable pageable) throws CustomException {
+        return new ApiResponseModel<>(commentReadService.findUserComments(userDetails, pageable));
     }
 }

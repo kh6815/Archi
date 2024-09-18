@@ -40,6 +40,11 @@ public class CommentModel {
         private Long commentId;
     }
 
+    @Getter
+    public static class DeleteCommentReq{
+        private List<Long> ids;
+    }
+
 
     /*
     * response
@@ -77,6 +82,32 @@ public class CommentModel {
             this.isContentAuthor = isContentAuthor;
             this.isWriteUser = isWriteUser;
             this.children = children;
+        }
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class UserCommentDto{
+        private Long id;
+        private Long contentId;
+        private String contentTitle;
+        private String comment;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+        private LocalDateTime createdAt;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+        private LocalDateTime updatedAt;
+        private Long like;
+
+        @Builder
+        public UserCommentDto(Long id, Long contentId, String contentTitle, String comment, LocalDateTime createdAt, LocalDateTime updatedAt, Long like) {
+            this.id = id;
+            this.contentId = contentId;
+            this.contentTitle = contentTitle;
+            this.comment = comment;
+            this.createdAt = createdAt;
+            this.updatedAt = updatedAt;
+            this.like = like;
         }
     }
 }

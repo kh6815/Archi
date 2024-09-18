@@ -159,10 +159,15 @@ public class ContentWriteService {
 //    }
 
     @Transactional(rollbackFor = Exception.class)
-    public Boolean deleteContent(ContentModel.DeleteContentReq deleteContentReq) throws CustomException {
-        List<ContentEntity> contentEntityList = contentRepository.findByIdIn(deleteContentReq.getIds());
+    public Boolean deleteContent(ContentModel.DeleteContentReq deleteContentReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException {
+        List<ContentEntity> contentEntityList = contentDao.findContents(deleteContentReq.getIds());
 
-        contentEntityList.forEach(ContentEntity::deleteContent);
+        for (ContentEntity contentEntity : contentEntityList) {
+            if(!userDetails.getUsername().equals(contentEntity.getUser().getId())){
+                throw new CustomException(ExceptionCode.INVALID, "댓글 작성자가 아니면 삭제할 수 없습니다.");
+            }
+            contentEntity.deleteContent();
+        }
         contentRepository.saveAll(contentEntityList);
 
         // 관련된 모든 contentFileEntity도 비활성화

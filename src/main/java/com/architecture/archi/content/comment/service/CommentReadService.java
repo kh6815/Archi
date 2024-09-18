@@ -7,6 +7,8 @@ import com.architecture.archi.db.entity.comment.CommentEntity;
 import com.architecture.archi.db.repository.comment.CommentDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,5 +30,10 @@ public class CommentReadService {
             userId = userDetails.getUsername();
         }
         return commentDao.findCommentsByContent(contentId, userId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Page<CommentModel.UserCommentDto> findUserComments(CustomUserDetails userDetails, Pageable pageable) throws CustomException {
+        return commentDao.findUserCommentsPagingByUserId(userDetails.getUsername(), pageable);
     }
 }
