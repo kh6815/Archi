@@ -68,7 +68,7 @@ public class ContentDao {
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, String.format("Contents is null")));
     }
 
-    public Page<ContentModel.ContentListDto> findContentPages(Long categoryId, Pageable pageable) throws CustomException {
+    public Page<ContentModel.ContentListDto> findContentPages(Long categoryId, Pageable pageable, List<Long> categoryIds) throws CustomException {
         try{
             List<ContentModel.ContentListDto> contentListDtoList = jpaQueryFactory
                     .select(
@@ -89,7 +89,7 @@ public class ContentDao {
                     .from(qContentEntity)
                     .where(
                             qContentEntity.delYn.eq(BooleanFlag.N)
-                                    .and(dynamicContentCategoryBuilder(categoryId))
+                                    .and(dynamicContentCategoryBuilder(categoryId, categoryIds))
                     )
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
@@ -114,7 +114,7 @@ public class ContentDao {
                     .selectFrom(qContentEntity)
                     .where(
                             qContentEntity.delYn.eq(BooleanFlag.N)
-                                    .and(dynamicContentCategoryBuilder(categoryId))
+                                    .and(dynamicContentCategoryBuilder(categoryId, categoryIds))
                     )
                     .stream().count();
             return new PageImpl<>(contentListDtoList, pageable, total);
@@ -334,12 +334,12 @@ public class ContentDao {
                         .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "해당하는 데이터가 없습니다."));
     }
 
-    private BooleanBuilder dynamicContentCategoryBuilder(Long categoryId) throws Exception {
+    private BooleanBuilder dynamicContentCategoryBuilder(Long categoryId, List<Long> categoryIds) throws Exception {
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
         if (categoryId != 0) {
-            return booleanBuilder.and(qContentEntity.category.id.eq(categoryId));
+            return booleanBuilder.and(qContentEntity.category.id.in(categoryIds));
         }
 
         return booleanBuilder;

@@ -3,6 +3,7 @@ package com.architecture.archi.content.content.service;
 import com.architecture.archi.common.error.CustomException;
 import com.architecture.archi.common.error.ExceptionCode;
 import com.architecture.archi.config.security.user.CustomUserDetails;
+import com.architecture.archi.content.admin.model.AdminModel;
 import com.architecture.archi.content.content.model.ContentModel;
 import com.architecture.archi.db.entity.content.BestContentEntity;
 import com.architecture.archi.db.entity.content.ContentEntity;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +40,7 @@ public class ContentReadService {
     private final ContentDao contentDao;
     private final FileDao fileDao;
     private final UserDao userDao;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Transactional(rollbackFor = Exception.class)
     public ContentModel.ContentDto findContent(Long id, CustomUserDetails userDetails) throws CustomException {
@@ -116,7 +119,47 @@ public class ContentReadService {
 
     @Transactional(rollbackFor = Exception.class)
     public Page<ContentModel.ContentListDto> findContents(Long categoryId, Pageable pageable) throws CustomException {
-        return contentDao.findContentPages(categoryId, pageable);
+        List<Long> categoryIds = new ArrayList<>();
+
+        if(categoryId != 0){
+            AdminModel.GetCategoryRes categoryRes = (AdminModel.GetCategoryRes) redisTemplate.opsForValue().get("categories");
+
+            if(categoryRes != null){
+                AdminModel.CategoryDto findCategory = findCategoryIds(categoryId, categoryRes.getCategoryList());
+
+                if(findCategory != null){
+                    categoryIds.add(findCategory.getId());
+                    findCategoryWithSubCategoryIds(findCategory, categoryIds);
+                }
+            }
+        }
+
+        return contentDao.findContentPages(categoryId, pageable, categoryIds);
+    }
+
+    private AdminModel.CategoryDto findCategoryIds(Long selectCategoryId, List<AdminModel.CategoryDto> categories){
+        for (AdminModel.CategoryDto category : categories) {
+            if(selectCategoryId == category.getId()){
+                return category;
+            }
+
+            if(!category.getSubCategories().isEmpty()) {
+                findCategoryIds(selectCategoryId, category.getSubCategories());
+            }
+        }
+        return null;
+    }
+
+    private void findCategoryWithSubCategoryIds(AdminModel.CategoryDto category, List<Long> selectCategoryList){
+        if(!category.getSubCategories().isEmpty()){
+            for (AdminModel.CategoryDto subCategory : category.getSubCategories()) {
+                selectCategoryList.add(subCategory.getId());
+
+                if(!subCategory.getSubCategories().isEmpty()){
+                    findCategoryWithSubCategoryIds(subCategory, selectCategoryList);
+                }
+            }
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
