@@ -1,6 +1,7 @@
 package com.architecture.archi.content.auth.service;
 
 import com.architecture.archi.common.EncryptUtil;
+import com.architecture.archi.common.enumobj.BooleanFlag;
 import com.architecture.archi.common.error.CustomException;
 import com.architecture.archi.common.error.ExceptionCode;
 import com.architecture.archi.common.model.ApiResponseModel;
@@ -12,8 +13,11 @@ import com.architecture.archi.db.entity.user.UserFileEntity;
 import com.architecture.archi.db.repository.auth.TokenPairRepository;
 import com.architecture.archi.db.repository.user.UserDao;
 import com.architecture.archi.db.repository.user.UserRepository;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +25,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -48,11 +54,19 @@ public class AuthService {
         return makeToken(user);
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public ApiResponseModel<AuthModel.AuthLoginRes> oauthLogin(String oauthId) throws CustomException {
+//    @Transactional(rollbackFor = Exception.class)
+//    public ApiResponseModel<AuthModel.AuthLoginRes> oauthLogin(String oauthId) throws CustomException {
+//
+//        UserEntity user = userRepository.findById(oauthId)
+//                .orElseThrow(() -> new CustomException(ExceptionCode.BAD_ID_REQUEST));
+//
+//        return makeToken(user);
+//    }
 
-        UserEntity user = userRepository.findById(oauthId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.BAD_ID_REQUEST));
+    @Transactional(rollbackFor = Exception.class)
+    public ApiResponseModel<AuthModel.AuthLoginRes> oauthLogin(AuthModel.SnsAuthLoginReq request) throws CustomException {
+
+        UserEntity user = findOrCreateUserBySnsId(request);
 
         return makeToken(user);
     }
@@ -204,5 +218,47 @@ public class AuthService {
         jwtUtils.setAccessTokenToBlackList(userId, tokenPair.getAccessToken());
         jwtUtils.destroyRedisAuthToken(tokenPair.getRefreshToken());
         tokenPair.updateToken(null, null);
+    }
+
+    public UserEntity findOrCreateUserBySnsId(AuthModel.SnsAuthLoginReq request) throws CustomException {
+        String providerId = request.getProviderId();
+        String email = request.getEmail();
+        String loginId = request.getSnsType() + "_" + providerId;
+        String name = request.getName();
+
+        Optional<UserEntity> findUser = userRepository.findById(loginId);
+        UserEntity userEntity;
+
+        if (findUser.isPresent()) {
+            userEntity = findUser.get();
+
+            // 이미 삭제된 유저 일 경우
+            if(userEntity.getDelYn().equals(BooleanFlag.Y)){
+                // 다시 유저 활성화
+                userEntity.comeBackUser();
+            }
+        } else{
+            boolean isExistEmail = userRepository.existsByEmail(email);
+
+            if (isExistEmail) {
+                throw new OAuth2AuthenticationException(ExceptionCode.ALREADY_EXIST.getResultMessage());
+            }
+
+            String now = LocalDateTime.now().toString();
+            for (String s : Arrays.asList("-", ".", ":", "T")) {
+                now = now.replace(s,"");
+            }
+
+            userEntity = UserEntity.builder()
+                    .id(loginId)
+                    .email(email)
+                    .nickName(name + now)
+                    .provider(request.getSnsType().getSnsType())
+                    .providerId(providerId)
+                    .build();
+            userRepository.save(userEntity);
+        }
+
+        return userEntity;
     }
 }

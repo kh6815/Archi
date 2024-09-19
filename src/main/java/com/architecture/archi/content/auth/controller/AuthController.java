@@ -28,6 +28,12 @@ public class AuthController implements AuthControllerDocs {
         return authService.login(request);
     }
 
+    @PostMapping("/oauth-login")
+    public ApiResponseModel<AuthModel.AuthLoginRes> oauthLogin(@Valid @RequestBody AuthModel.SnsAuthLoginReq request) throws CustomException {
+        return authService.oauthLogin(request);
+    }
+
+
     @PostMapping("/logout")
     public ApiResponseModel<AuthModel.AuthLoginRes> logout(@RequestBody AuthModel.AuthLogoutReq request) throws CustomException {
         return authService.logout(request.getId());
