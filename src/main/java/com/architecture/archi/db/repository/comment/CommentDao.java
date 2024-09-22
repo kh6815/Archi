@@ -77,6 +77,8 @@ public class CommentDao {
         QCommentEntity qCommentEntity = QCommentEntity.commentEntity;
         QCommentEntity qChildCommentEntity = new QCommentEntity("childComment");
 
+        QUserEntity qUserEntity2 = new QUserEntity("UserEntity2");
+
         QUserEntity qLikeUserEntity = new QUserEntity("qLikeUserEntity");
 
         List<CommentEntity> parentCommentEntityList = jpaQueryFactory
@@ -109,6 +111,7 @@ public class CommentDao {
                 .selectFrom(qChildCommentEntity)
                 .leftJoin(qChildCommentEntity.parent, qCommentEntity).fetchJoin()
                 .leftJoin(qChildCommentEntity.user, qUserEntity).fetchJoin()
+                .leftJoin(qChildCommentEntity.sendUser, qUserEntity2).fetchJoin()
                 .leftJoin(qChildCommentEntity.commentLikes, qCommentLikeEntity).fetchJoin()
                 .leftJoin(qCommentLikeEntity.user, qLikeUserEntity).fetchJoin()
                 .where(qChildCommentEntity.content.id.eq(contentId)
@@ -132,7 +135,12 @@ public class CommentDao {
             List<CommentModel.CommentDto> commentList = childrenCommentsMap.computeIfAbsent(parentId, k -> new ArrayList<>());
 
             // 새로운 CommentDto 객체를 리스트에 추가
-            commentList.add(convertToDto(commentEntity, userId, childrenUserFileUrlList));
+            CommentModel.CommentDto commentDto = convertToDto(commentEntity, userId, childrenUserFileUrlList);
+            commentDto.setParentCommentId(commentEntity.getParent().getId());
+            if(commentEntity.getSendUser() != null){
+                commentDto.setSendUserNickName(commentEntity.getSendUser().getNickName());
+            }
+            commentList.add(commentDto);
         }
 
         // 5. 부모 댓글에 자식 댓글을 매핑

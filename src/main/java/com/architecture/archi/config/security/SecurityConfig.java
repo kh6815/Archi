@@ -111,6 +111,7 @@ public class SecurityConfig  {
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/content/list/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/content/get/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/comment/list/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/v1/notifications/subscribe/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/index.html")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/login/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()

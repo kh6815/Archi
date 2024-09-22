@@ -24,6 +24,7 @@ public class CommentModel {
         private Long parentId; // 0은 제일 상위 댓글
         @NotBlank(message = "필수값입니다.")
         private String comment;
+        private String sendUserNickName;
     }
 
     @Getter
@@ -54,9 +55,11 @@ public class CommentModel {
     @NoArgsConstructor
     public static class CommentDto{
         private Long id;
+        private Long parentCommentId;
         private String comment;
         private BooleanFlag delYn;
         private String userNickName;
+        private String sendUserNickName;
         private String commentAuthorImgUrl;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime createdAt;
