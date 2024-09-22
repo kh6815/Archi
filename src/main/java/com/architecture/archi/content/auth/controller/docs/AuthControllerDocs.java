@@ -25,6 +25,12 @@ public interface AuthControllerDocs {
     })
     public ApiResponseModel<AuthModel.AuthLoginRes> login(@Valid @RequestBody AuthModel.AuthLoginReq request) throws CustomException;
 
+    @Operation(summary = "소셜로그인", description = "소셜로그인 API 입니다")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "로그인 완료", content = @Content(schema = @Schema(implementation = AuthModel.AuthLoginRes.class)))
+    })
+    public ApiResponseModel<AuthModel.AuthLoginRes> oauthLogin(@Valid @RequestBody AuthModel.SnsAuthLoginReq request) throws CustomException;
+
     @Operation(summary = "로그아웃", description = "로그아웃 API 입니다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "로그아웃 완료", content = @Content(schema = @Schema(implementation = AuthModel.AuthLoginRes.class)))

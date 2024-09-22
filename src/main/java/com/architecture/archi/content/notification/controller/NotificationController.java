@@ -3,6 +3,7 @@ package com.architecture.archi.content.notification.controller;
 import com.architecture.archi.common.error.CustomException;
 import com.architecture.archi.common.model.ApiResponseModel;
 import com.architecture.archi.config.security.user.CustomUserDetails;
+import com.architecture.archi.content.notification.controller.docs.NotificationControllerDocs;
 import com.architecture.archi.content.notification.model.NotificationModel;
 import com.architecture.archi.content.notification.service.NotificationService;
 import com.architecture.archi.db.entity.notification.NotificationEntity;
@@ -19,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/notifications")
-public class NotificationController {
+public class NotificationController implements NotificationControllerDocs {
 
     private final NotificationService notificationService;
     // 클라이언트가 알림을 구독하는 엔드포인트

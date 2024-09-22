@@ -54,11 +54,11 @@ public interface ContentControllerDocs {
     })
     public ApiResponseModel<Long> addContent(@Valid @RequestBody ContentModel.AddContentReq addContentReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
 
-//    @Operation(summary = "컨텐츠 수정", description = "컨텐츠 수정 API 입니다")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "201", description = "컨텐츠 수정 완료", content = @Content(schema = @Schema(implementation = Boolean.class)))
-//    })
-//    public ApiResponseModel<Boolean> updateContent(@RequestBody ContentModel.UpdateContentReq updateContentReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
+    @Operation(summary = "컨텐츠 수정", description = "컨텐츠 수정 API 입니다")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "컨텐츠 수정 완료", content = @Content(schema = @Schema(implementation = Boolean.class)))
+    })
+    public ApiResponseModel<Boolean> updateContent(@RequestBody ContentModel.UpdateContentReq updateContentReq, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
 
     @Operation(summary = "컨텐츠 삭제", description = "컨텐츠 삭제 API 입니다")
     @ApiResponses(value = {
@@ -88,4 +88,22 @@ public interface ContentControllerDocs {
             @ApiResponse(responseCode = "201", description = "조회 완료", content = @Content(schema = @Schema(implementation = ContentModel.NoticeDto.class)))
     })
     public ApiResponseModel<ContentModel.NoticeDto> getNotice(@PathVariable("id") Long id, @AuthenticationPrincipal CustomUserDetails userDetails) throws CustomException;
+
+    // 인기 컨텐츠 조회
+    @Operation(summary = "인기 컨텐츠 조회", description = "인기 컨텐츠 조회 API 입니다")
+    @Parameters(value = {
+    })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "조회 완료", content = @Content(schema = @Schema(implementation = List.class)))
+    })
+    public ApiResponseModel<List<ContentModel.ContentListDto>> getPopularContent() throws CustomException;
+
+    // 내가 쓴글 조회
+    @Operation(summary = "내가 쓴글 조회", description = "내가 쓴글 조회 API 입니다")
+    @Parameters(value = {
+    })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "조회 완료", content = @Content(schema = @Schema(implementation = Page.class)))
+    })
+    public ApiResponseModel<Page<ContentModel.ContentListDto>> getUserContents(@AuthenticationPrincipal CustomUserDetails userDetails, Pageable pageable) throws CustomException;
 }
