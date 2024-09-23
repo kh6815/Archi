@@ -30,16 +30,6 @@ public class NotificationDao {
     private final QUserEntity qUserEntity = QUserEntity.userEntity;
     private final QNotificationEntity qNotificationEntity = QNotificationEntity.notificationEntity;
 
-
-    private Long id;
-    private Long contendId;
-    private String sendUserNickName;
-    private BooleanFlag readYn;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime createdAt;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime updatedAt;
-
     public List<NotificationModel.NotificationListDto> findNotificationReadNByReceiverId(String userId) throws CustomException {
         return
                 jpaQueryFactory
