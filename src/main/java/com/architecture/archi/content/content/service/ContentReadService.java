@@ -134,8 +134,6 @@ public class ContentReadService {
             }
         }
 
-        System.out.println("categoryIds = " + categoryIds);
-
         return contentDao.findContentPages(categoryId, pageable, categoryIds);
     }
 
