@@ -134,20 +134,24 @@ public class ContentReadService {
             }
         }
 
+        System.out.println("categoryIds = " + categoryIds);
+
         return contentDao.findContentPages(categoryId, pageable, categoryIds);
     }
 
     private AdminModel.CategoryDto findCategoryIds(Long selectCategoryId, List<AdminModel.CategoryDto> categories){
+        AdminModel.CategoryDto result = null;
         for (AdminModel.CategoryDto category : categories) {
             if(selectCategoryId == category.getId()){
-                return category;
+                result = category;
+                return result;
             }
 
             if(!category.getSubCategories().isEmpty()) {
-                findCategoryIds(selectCategoryId, category.getSubCategories());
+                result = findCategoryIds(selectCategoryId, category.getSubCategories());
             }
         }
-        return null;
+        return result;
     }
 
     private void findCategoryWithSubCategoryIds(AdminModel.CategoryDto category, List<Long> selectCategoryList){
