@@ -97,4 +97,4 @@ https://52.79.69.111:18080/swagger-ui/index.html
 - **인증/인가 API**: `/api/v1/auth` - 유저 로그인, 로그아웃, 토큰 refresh 관련 기능을 제공합니다.
 
 ## ERD
-
+https://app.diagrams.net/#G1zUR_abSdtdSqhZkK-b0yGxIBGk7-plMk#%7B%22pageId%22%3A%22u4vEcps5jHnmp1nRnu5Y%22%7D
