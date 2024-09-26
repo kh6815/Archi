@@ -60,19 +60,20 @@ archi-back/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/architecture/archi/
-│   │   │   ├── common/         # 서버 공통 로직 및 에러 처리 정의
-│   │   │   ├── config/         # config 파일 관리
-│   │   │   ├── content/        # API 개발 (비즈니스 로직 처리)
-│   │   │   └── db/             # DB 관련 Entity, Repository 관리
+│   │   │   ├── common/          # 서버 공통 로직 및 에러 처리 정의
+│   │   │   ├── config/          # config 파일 관리
+│   │   │   ├── content/         # API 개발 (비즈니스 로직 처리)
+│   │   │   └── db/              # DB 관련 Entity, Repository 관리
 │   │   └── resources/
-│   │       ├── db/             # DB 마이그레이션 관련 파일 관리
-│   │       │   └── migration/  # Flyway 마이그레이션 스크립트 파일
-│   │       ├── profiles/       # 환경별 yml 설정 분리
-│   │       │   ├── dev/        # dev 환경 설정
-│   │       │   ├── local/      # local 환경 설정
-│   │       │   ├── prod/       # prod 환경 설정
+│   │       ├── db/              # DB 마이그레이션 관련 파일 관리
+│   │       │   └── migration/    # Flyway 마이그레이션 스크립트 파일
+│   │       ├── profiles/        # 환경별 yml 설정 분리
+│   │       │   ├── dev/         # dev 환경 설정
+│   │       │   ├── local/       # local 환경 설정
+│   │       │   ├── prod/        # prod 환경 설정
 │   │       └── application-core.yml # 공통 환경 설정 파일
 └── ...
+
 
 
 ## 기술 스택
