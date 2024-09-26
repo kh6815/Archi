@@ -79,14 +79,14 @@ archi-back/
 
 
 ## 기술 스택
-Java 17
-Spring Boot, Spring Security
-JPA (Hibernate), QueryDSL, MySQL, Flyway
-Redis
-docker
-AWS
- - S3
- - EC2
+- Java 17
+- Spring Boot, Spring Security
+- JPA (Hibernate), QueryDSL, MySQL, Flyway
+- Redis
+- docker
+- AWS
+  - S3
+  - EC2
 
 
 ## API 설계 (Swagger)
