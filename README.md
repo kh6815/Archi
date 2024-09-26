@@ -90,7 +90,7 @@ archi-back/
 
 
 ## API 설계 (Swagger)
-https://52.79.69.111:18080/swagger-ui/index.html
+https://52.79.69.111.nip.io/swagger-ui/index.html
 
 - **어드민 API**: `/api/v1/admin` - 어드민 계정만 사용가능한 API 입니다. (공지사항 및 카테고리 관련 API가 포함되어있습니다.)
 - **알림 API**: `/api/v1/notification` - SSE를 통한 유저 알림 관련 API 입니다.
