@@ -56,6 +56,7 @@ AWS S3를 사용해 게시글에 첨부된 이미지 파일을 저장하며, 필
 이 프로젝트는 Spring boot를 통해 개발된 백엔드 개발자 커뮤니티 사이트의 API서버 입니다.
 
 ## 프로젝트 구조
+<pre>
 archi-back/
 ├── src/
 │   ├── main/
@@ -73,6 +74,7 @@ archi-back/
 │   │       │   ├── prod/        # prod 환경 설정
 │   │       └── application-core.yml # 공통 환경 설정 파일
 └── ...
+</pre>
 
 
 
