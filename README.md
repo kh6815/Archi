@@ -107,7 +107,8 @@ https://52.79.69.111.nip.io/swagger-ui/index.html
 
 해당 테이블들의 연관관계를 표현한 다이어그램을 확인할 수 있습니다.
 
-![archi drawio](https://github.com/user-attachments/assets/2c37568f-6949-4c28-bbf3-f5bb9a6f353a)
+![archi drawio](https://github.com/user-attachments/assets/b3c45c6e-dc98-41f9-bacf-ea3589830a93)
+
 
 
 ## 배포
