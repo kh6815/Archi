@@ -106,7 +106,7 @@ https://52.79.69.111.nip.io/swagger-ui/index.html
 - 댓글 관련 테이블
 
 해당 테이블들의 연관관계를 표현한 다이어그램을 확인할 수 있습니다.
-- https://app.diagrams.net/#G1zUR_abSdtdSqhZkK-b0yGxIBGk7-plMk#%7B%22pageId%22%3A%22u4vEcps5jHnmp1nRnu5Y%22%7D
+- https://drive.google.com/file/d/1zUR_abSdtdSqhZkK-b0yGxIBGk7-plMk/view?usp=sharing
 
 ## 배포
 서버 배포는 AWS를 사용하여 진행했습니다.
