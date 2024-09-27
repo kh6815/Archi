@@ -106,6 +106,7 @@ https://52.79.69.111.nip.io/swagger-ui/index.html
 - 댓글 관련 테이블
 
 해당 테이블들의 연관관계를 표현한 다이어그램을 확인할 수 있습니다.
+
 ![archi drawio](https://github.com/user-attachments/assets/2c37568f-6949-4c28-bbf3-f5bb9a6f353a)
 
 
