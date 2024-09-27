@@ -109,7 +109,7 @@ https://52.79.69.111.nip.io/swagger-ui/index.html
 https://app.diagrams.net/#G1zUR_abSdtdSqhZkK-b0yGxIBGk7-plMk#%7B%22pageId%22%3A%22u4vEcps5jHnmp1nRnu5Y%22%7D
 
 ## 배포
-서버 배포는 AWS를 사용하여 배포를 진행했습니다.
+서버 배포는 AWS를 사용하여 진행했습니다.
 - EC2 인스턴스에서 Docker를 통해 MySQL과 Redis를 컨테이너 형태로 실행하여 데이터베이스와 캐싱 시스템을 관리.
 - Spring Boot 애플리케이션은 개발(dev) 환경에서 JAR 파일을 빌드한 후 EC2에 업로드하여 실행.
 - Caddy를 이용해 SSL 인증서를 자동으로 발급하고 갱신하여 HTTPS 연결을 보장.
