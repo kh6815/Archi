@@ -9,9 +9,9 @@
 프로젝트는 API서버, Batch서버, React 세 개의 독립된 모듈로 나뉘어 있으며, 
 각각의 모듈은 서로 긴밀하게 연동되어 사이트의 다양한 기능을 제공하는 형태로 개발됐습니다.
 
+- [프론트엔드(클라이언트)](https://github.com/kh6815/archi-cli) : React로 개발된 사용자 인터페이스로, 게시글 작성 및 탐색, 좋아요, 댓글 등 다양한 상호작용 기능을 제공합니다.
 - [API 서버](#API-서버-소개) : Spring Boot를 기반으로 커뮤니티의 핵심 기능(게시글, 댓글, 사용자 인증 등)을 담당하는 백엔드 서버입니다.
 - [Batch 서버](https://github.com/kh6815/archi-sub) : Spring Batch를 활용해 정기적으로 파일과 데이터를 관리하는 서버입니다.
-- [프론트엔드](https://github.com/kh6815/archi-cli) : React로 개발된 사용자 인터페이스로, 게시글 작성 및 탐색, 좋아요, 댓글 등 다양한 상호작용 기능을 제공합니다.
 
 
 ![‎archi 구성도 ‎001](https://github.com/user-attachments/assets/31287d1c-ade1-4191-a2ac-01e3cb346638)
