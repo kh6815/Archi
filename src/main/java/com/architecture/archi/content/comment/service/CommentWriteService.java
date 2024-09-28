@@ -59,9 +59,9 @@ public class CommentWriteService {
             throw new CustomException(ExceptionCode.NOT_EXIST, "보내는 대상이 존재하지 않습니다.");
         }
 
-        if(sendUserEntityOptional.get().getId().equals(userDetails.getUsername())){
-            throw new CustomException(ExceptionCode.ALREADY_EXIST, "자기 자신한테는 답글을 쓸 수 없습니다.");
-        }
+//        if(sendUserEntityOptional.get().getId().equals(userDetails.getUsername())){
+//            throw new CustomException(ExceptionCode.ALREADY_EXIST, "자기 자신한테는 답글을 쓸 수 없습니다.");
+//        }
 
         UserEntity userEntity = userDetails.getUser();
         ContentEntity contentEntity = contentDao.findContentWithUser(addCommentReq.getContentId());
@@ -76,6 +76,11 @@ public class CommentWriteService {
                 .build();
 
         CommentEntity comment = commentRepository.save(commentEntity);
+
+        // 자기 자신이면 알람을 보낼 필요 없음
+        if(sendUserEntityOptional.get().getId().equals(userDetails.getUsername())){
+            return comment.getId();
+        }
 
         // 알림 전송 로직 추가
         try {

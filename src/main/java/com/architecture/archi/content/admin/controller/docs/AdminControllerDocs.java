@@ -17,7 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "카테고리 API", description = "카테고리 관련 컨트롤러입니다.")
+@Tag(name = "어드민 API", description = "카테고리 관련 컨트롤러입니다.")
 public interface AdminControllerDocs {
     @Operation(summary = "카테고리 등록", description = "카테고리 등록 API 입니다")
     @ApiResponses(value = {
