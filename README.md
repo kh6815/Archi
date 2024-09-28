@@ -13,7 +13,9 @@
 - [Batch 서버](https://github.com/kh6815/archi-sub) : Spring Batch를 활용해 정기적으로 파일과 데이터를 관리하는 서버입니다.
 - [프론트엔드](https://github.com/kh6815/archi-cli) : React로 개발된 사용자 인터페이스로, 게시글 작성 및 탐색, 좋아요, 댓글 등 다양한 상호작용 기능을 제공합니다.
 
-## 전체 아키텍처
+## 전체 구성도
+![‎archi 구성도 ‎001](https://github.com/user-attachments/assets/31287d1c-ade1-4191-a2ac-01e3cb346638)
+
 
 ## 3. 주요 기능
 ### 3.1 회원가입 및 로그인
