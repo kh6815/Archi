@@ -90,6 +90,7 @@ archi-back/
 ## API 설계 (Swagger)
 Swagger 문서
 API는 Swagger를 통해 문서화되어 있으며, 이를 통해 자세한 API 스펙을 확인할 수 있습니다.
+
 https://52.79.69.111.nip.io/swagger-ui/index.html
 
 - **어드민 API**: `/api/v1/admin` - 관리자 전용 API (공지사항 및 카테고리 관련 기능)
