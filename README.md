@@ -126,7 +126,7 @@ https://52.79.69.111.nip.io/swagger-ui/index.html
     - 게시물과 파일의 연관 관계를 관리.
     - 첨부된 파일의 삭제 여부를 관리(del_yn).
 
-** User File, Notice File, Content File **
+**User File, Notice File, Content File**
 배치 서버를 통해 del_yn(필드)=Y 인 테이블의 연관관계 테이블과 해당 파일을 삭제.
 
 
