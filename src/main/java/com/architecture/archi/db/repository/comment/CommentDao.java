@@ -62,15 +62,12 @@ public class CommentDao {
     }
 
     public List<CommentEntity> findComments(List<Long> ids) throws CustomException {
-        return Optional.ofNullable(
-                        jpaQueryFactory
-                                .selectFrom(qCommentEntity)
-                                .leftJoin(qCommentEntity.user, qUserEntity).fetchJoin()
-                                .where(qCommentEntity.id.in(ids))
-                                .fetch()
-
-                )
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, String.format("Comments is null")));
+        return
+                jpaQueryFactory
+                        .selectFrom(qCommentEntity)
+                        .leftJoin(qCommentEntity.user, qUserEntity).fetchJoin()
+                        .where(qCommentEntity.id.in(ids))
+                        .fetch();
     }
 
     public List<CommentModel.CommentDto> findCommentsByContent(Long contentId, String userId) {

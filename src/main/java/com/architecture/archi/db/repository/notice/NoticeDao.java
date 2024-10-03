@@ -59,36 +59,27 @@ public class NoticeDao {
 
     public List<NoticeFileEntity> findNoticeFileByNoticeId(Long noticeId) throws CustomException {
         return
-                Optional.ofNullable(
-                                jpaQueryFactory
-                                        .selectFrom(qNoticeFileEntity)
-                                        .where(qNoticeFileEntity.notice.id.eq(noticeId)
-                                                .and(qNoticeFileEntity.delYn.eq(BooleanFlag.N)))
-                                        .fetch()
-                        )
-                        .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "해당하는 데이터가 없습니다."));
+                jpaQueryFactory
+                        .selectFrom(qNoticeFileEntity)
+                        .where(qNoticeFileEntity.notice.id.eq(noticeId)
+                                .and(qNoticeFileEntity.delYn.eq(BooleanFlag.N)))
+                        .fetch();
     }
 
     public List<NoticeFileEntity> findNoticeFileByNoticeIds(List<Long> noticeIds) throws CustomException{
         return
-                Optional.ofNullable(
-                                jpaQueryFactory
-                                        .selectFrom(qNoticeFileEntity)
-                                        .where(qNoticeFileEntity.notice.id.in(noticeIds))
-                                        .fetch()
-                        )
-                        .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "해당하는 데이터가 없습니다."));
+                jpaQueryFactory
+                        .selectFrom(qNoticeFileEntity)
+                        .where(qNoticeFileEntity.notice.id.in(noticeIds))
+                        .fetch();
     }
 
     public List<NoticeFileEntity> findNoticeFileByFileIds(List<Long> fileIds) throws CustomException{
         return
-                Optional.ofNullable(
-                                jpaQueryFactory
-                                        .selectFrom(qNoticeFileEntity)
-                                        .where(qNoticeFileEntity.file.id.in(fileIds))
-                                        .fetch()
-                        )
-                        .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "해당하는 데이터가 없습니다."));
+                jpaQueryFactory
+                        .selectFrom(qNoticeFileEntity)
+                        .where(qNoticeFileEntity.file.id.in(fileIds))
+                        .fetch();
     }
 
     public void updateDelYnContentNoticeListByNoticeIds(List<Long> noticeIds) {

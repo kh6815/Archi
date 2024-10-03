@@ -57,15 +57,12 @@ public class ContentDao {
     private final QNoticeFileEntity qNoticeFileEntity = QNoticeFileEntity.noticeFileEntity;
 
     public List<ContentEntity> findContents(List<Long> ids) throws CustomException {
-        return Optional.ofNullable(
-                        jpaQueryFactory
-                                .selectFrom(qContentEntity)
-                                .leftJoin(qContentEntity.user, qUserEntity).fetchJoin()
-                                .where(qContentEntity.id.in(ids))
-                                .fetch()
-
-                )
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, String.format("Contents is null")));
+        return
+                jpaQueryFactory
+                        .selectFrom(qContentEntity)
+                        .leftJoin(qContentEntity.user, qUserEntity).fetchJoin()
+                        .where(qContentEntity.id.in(ids))
+                        .fetch();
     }
 
     public Page<ContentModel.ContentListDto> findContentPages(Long categoryId, Pageable pageable, List<Long> categoryIds) throws CustomException {
@@ -140,26 +137,21 @@ public class ContentDao {
     }
 
     public List<String> findLikeUserIdListByContentLikeIds(List<Long> contentLikeListIds) throws CustomException {
-        return Optional.ofNullable(
-                        jpaQueryFactory
-                                .select(qContentLikeEntity.user.id)
-                                .from(qContentLikeEntity)
-                                .where(qContentLikeEntity.id.in(contentLikeListIds))
-                                .fetch()
-
-                )
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "존재하지 않는 like"));
+        return
+                jpaQueryFactory
+                        .select(qContentLikeEntity.user.id)
+                        .from(qContentLikeEntity)
+                        .where(qContentLikeEntity.id.in(contentLikeListIds))
+                        .fetch();
     }
 
     public Map<Long, List<ContentFileEntity>> findContentFileListByContentIds(List<Long> contentIds) throws CustomException {
-        List<ContentFileEntity> contentFileEntities = Optional.ofNullable(
+        List<ContentFileEntity> contentFileEntities =
                         jpaQueryFactory
                                 .selectFrom(qContentFileEntity)
                                 .leftJoin(qContentFileEntity.file, qFileEntity).fetchJoin()
                                 .where(qContentFileEntity.content.id.in(contentIds))
-                                .fetch()
-                )
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, String.format("BestContent not found")));
+                                .fetch();
 
         // contentId를 기준으로 List<ContentFileEntity>를 그룹화
         return contentFileEntities.stream()
@@ -271,19 +263,17 @@ public class ContentDao {
     }
 
     public List<BestContentEntity> findPopularContent() throws CustomException {
-        return Optional.ofNullable(
-                        jpaQueryFactory
-                                .selectFrom(qBestContentEntity)
-                                .leftJoin(qBestContentEntity.content, qContentEntity).fetchJoin()
-                                .leftJoin(qContentEntity.category, qCategoryEntity).fetchJoin()
-                                .leftJoin(qContentEntity.contentLikes, qContentLikeEntity).fetchJoin()
+        return
+                jpaQueryFactory
+                        .selectFrom(qBestContentEntity)
+                        .leftJoin(qBestContentEntity.content, qContentEntity).fetchJoin()
+                        .leftJoin(qContentEntity.category, qCategoryEntity).fetchJoin()
+                        .leftJoin(qContentEntity.contentLikes, qContentLikeEntity).fetchJoin()
 //                                .leftJoin(qContentEntity.contentFiles, qContentFileEntity).fetchJoin()
 //                                .leftJoin(qContentFileEntity.file, qFileEntity).fetchJoin()
-                                .where(qBestContentEntity.content.delYn.eq(BooleanFlag.N))
-                                .orderBy(qBestContentEntity.contentRank.asc())
-                                .fetch()
-                )
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, String.format("BestContent not")));
+                        .where(qBestContentEntity.content.delYn.eq(BooleanFlag.N))
+                        .orderBy(qBestContentEntity.contentRank.asc())
+                        .fetch();
     }
 
     public ContentEntity findSimpleContent(Long id) throws CustomException {
@@ -313,25 +303,19 @@ public class ContentDao {
 
     public List<ContentFileEntity> findContentFileByContentId(Long contentId) throws CustomException {
         return
-                Optional.ofNullable(
-                        jpaQueryFactory
-                                .selectFrom(qContentFileEntity)
-                                .where(qContentFileEntity.content.id.eq(contentId)
-                                    .and(qContentFileEntity.delYn.eq(BooleanFlag.N)))
-                                .fetch()
-                )
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "해당하는 데이터가 없습니다."));
+                jpaQueryFactory
+                        .selectFrom(qContentFileEntity)
+                        .where(qContentFileEntity.content.id.eq(contentId)
+                            .and(qContentFileEntity.delYn.eq(BooleanFlag.N)))
+                        .fetch();
     }
 
     public List<ContentFileEntity> findContentFileByContentIds(List<Long> contentIds) throws CustomException{
         return
-                Optional.ofNullable(
-                                jpaQueryFactory
-                                        .selectFrom(qContentFileEntity)
-                                        .where(qContentFileEntity.content.id.in(contentIds))
-                                        .fetch()
-                        )
-                        .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "해당하는 데이터가 없습니다."));
+                jpaQueryFactory
+                        .selectFrom(qContentFileEntity)
+                        .where(qContentFileEntity.content.id.in(contentIds))
+                        .fetch();
     }
 
     private BooleanBuilder dynamicContentCategoryBuilder(Long categoryId, List<Long> categoryIds) throws Exception {
@@ -395,13 +379,10 @@ public class ContentDao {
 
     public List<ContentFileEntity> findContentFileByFileIds(List<Long> fileIds) throws CustomException{
         return
-                Optional.ofNullable(
-                                jpaQueryFactory
-                                        .selectFrom(qContentFileEntity)
-                                        .where(qContentFileEntity.file.id.in(fileIds))
-                                        .fetch()
-                        )
-                        .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "해당하는 데이터가 없습니다."));
+                jpaQueryFactory
+                        .selectFrom(qContentFileEntity)
+                        .where(qContentFileEntity.file.id.in(fileIds))
+                        .fetch();
     }
 
     public void updateDelYnContentFileListByContentIds(List<Long> contentIds) {
