@@ -31,7 +31,7 @@ public interface ContentControllerDocs {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "조회 완료", content = @Content(schema = @Schema(implementation = Page.class)))
     })
-    public ApiResponseModel<Page<ContentModel.ContentListDto>> getContents(@PathVariable("categoryId") Long categoryId, Pageable pageable) throws Exception;
+    public ApiResponseModel<Page<ContentModel.ContentListDto>> getContents(@PathVariable("categoryId") Long categoryId, Pageable pageable);
 
     @Operation(summary = "컨텐츠 조회", description = "컨텐츠 조회 API 입니다")
     @Parameters(value = {
@@ -77,7 +77,7 @@ public interface ContentControllerDocs {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "조회 완료", content = @Content(schema = @Schema(implementation = List.class)))
     })
-    public ApiResponseModel<List<ContentModel.NoticeListDto>> getNotices() throws Exception;
+    public ApiResponseModel<List<ContentModel.NoticeListDto>> getNotices();
 
     // 공지사항 조회
     @Operation(summary = "공지사항 조회", description = "공지사항 조회 API 입니다")

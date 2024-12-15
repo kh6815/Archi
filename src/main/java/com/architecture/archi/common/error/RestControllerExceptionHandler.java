@@ -25,7 +25,7 @@ public class RestControllerExceptionHandler {
         Exception.class
     })
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ResponseBody public ApiResponseModel ExceptionHandler(Exception ex) throws Exception {
+    @ResponseBody public ApiResponseModel ExceptionHandler(Exception ex) {
 
         log.error(ex.getClass().getSimpleName() + " Handling : {}", ex);
 
@@ -40,7 +40,7 @@ public class RestControllerExceptionHandler {
             MethodArgumentNotValidException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody public ApiResponseModel ValidExceptionHandler(MethodArgumentNotValidException ex) throws Exception {
+    @ResponseBody public ApiResponseModel ValidExceptionHandler(MethodArgumentNotValidException ex) {
 
         log.error(ex.getClass().getSimpleName() + " Handling : {}", ex);
 
@@ -73,7 +73,7 @@ public class RestControllerExceptionHandler {
             HttpMediaTypeException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody public ApiResponseModel badRequestExceptionHandler(Exception ex) throws Exception {
+    @ResponseBody public ApiResponseModel badRequestExceptionHandler(Exception ex) {
 
         log.error(ex.getClass().getSimpleName() + " Handling : {}", ex);
 
@@ -85,7 +85,7 @@ public class RestControllerExceptionHandler {
     }
 
     @ExceptionHandler({CustomException.class})
-    @ResponseBody public ResponseEntity<ApiResponseModel> CustomExceptionHandler(CustomException ex) throws Exception {
+    @ResponseBody public ResponseEntity<ApiResponseModel> CustomExceptionHandler(CustomException ex) {
 
         log.error("CustomException Handling : {}", ex);
 

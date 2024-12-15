@@ -118,7 +118,7 @@ public class ContentReadService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Page<ContentModel.ContentListDto> findContents(Long categoryId, Pageable pageable) throws CustomException {
+    public Page<ContentModel.ContentListDto> findContents(Long categoryId, Pageable pageable) {
         List<Long> categoryIds = new ArrayList<>();
 
         if(categoryId != 0){
@@ -196,7 +196,7 @@ public class ContentReadService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public List<ContentModel.NoticeListDto> findNotices() throws Exception {
+    public List<ContentModel.NoticeListDto> findNotices() {
         return contentDao.findNoticeList();
     }
 

@@ -65,60 +65,55 @@ public class ContentDao {
                         .fetch();
     }
 
-    public Page<ContentModel.ContentListDto> findContentPages(Long categoryId, Pageable pageable, List<Long> categoryIds) throws CustomException {
-        try{
-            List<ContentModel.ContentListDto> contentListDtoList = jpaQueryFactory
-                    .select(
-                            Projections.constructor(ContentModel.ContentListDto.class,
-                                    qContentEntity.id,
-                                    qContentEntity.category.categoryName,
-                                    qContentEntity.title,
-                                    qContentEntity.content,
-                                    qContentEntity.updatedAt,
-                                    // 서브쿼리를 사용하여 해당 content의 좋아요 수를 계산
-                                    JPAExpressions
-                                            .select(qContentLikeEntity.count())
-                                            .from(qContentLikeEntity)
-                                            .where(qContentLikeEntity.content.id.eq(qContentEntity.id))
-                            )
+    public Page<ContentModel.ContentListDto> findContentPages(Long categoryId, Pageable pageable, List<Long> categoryIds) {
+        List<ContentModel.ContentListDto> contentListDtoList = jpaQueryFactory
+                .select(
+                        Projections.constructor(ContentModel.ContentListDto.class,
+                                qContentEntity.id,
+                                qContentEntity.category.categoryName,
+                                qContentEntity.title,
+                                qContentEntity.content,
+                                qContentEntity.updatedAt,
+                                // 서브쿼리를 사용하여 해당 content의 좋아요 수를 계산
+                                JPAExpressions
+                                        .select(qContentLikeEntity.count())
+                                        .from(qContentLikeEntity)
+                                        .where(qContentLikeEntity.content.id.eq(qContentEntity.id))
+                        )
 
-                    )
-                    .from(qContentEntity)
-                    .where(
-                            qContentEntity.delYn.eq(BooleanFlag.N)
-                                    .and(dynamicContentCategoryBuilder(categoryId, categoryIds))
-                    )
-                    .offset(pageable.getOffset())
-                    .limit(pageable.getPageSize())
-                    .orderBy(qContentEntity.createdAt.desc())
+                )
+                .from(qContentEntity)
+                .where(
+                        qContentEntity.delYn.eq(BooleanFlag.N)
+                                .and(dynamicContentCategoryBuilder(categoryId, categoryIds))
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(qContentEntity.createdAt.desc())
 //                .distinct()
-                    .fetch();
+                .fetch();
 
-            List<Long> contentIds = contentListDtoList.stream()
-                    .map(ContentModel.ContentListDto::getId)
-                    .toList();
+        List<Long> contentIds = contentListDtoList.stream()
+                .map(ContentModel.ContentListDto::getId)
+                .toList();
 
-            Map<Long, ContentFileEntity> contentFileEntityMap = findSingleContentFileByContentIds(contentIds);
+        Map<Long, ContentFileEntity> contentFileEntityMap = findSingleContentFileByContentIds(contentIds);
 
-            for (ContentModel.ContentListDto contentListDto : contentListDtoList) {
-                if(contentFileEntityMap.containsKey(contentListDto.getId())){
-                    FileEntity file = contentFileEntityMap.get(contentListDto.getId()).getFile();
-                    contentListDto.setImgUrl(file.getUrl());
-                }
+        for (ContentModel.ContentListDto contentListDto : contentListDtoList) {
+            if(contentFileEntityMap.containsKey(contentListDto.getId())){
+                FileEntity file = contentFileEntityMap.get(contentListDto.getId()).getFile();
+                contentListDto.setImgUrl(file.getUrl());
             }
+        }
 
-            long total = jpaQueryFactory
-                    .selectFrom(qContentEntity)
-                    .where(
-                            qContentEntity.delYn.eq(BooleanFlag.N)
-                                    .and(dynamicContentCategoryBuilder(categoryId, categoryIds))
-                    )
-                    .stream().count();
-            return new PageImpl<>(contentListDtoList, pageable, total);
-        }
-        catch(Exception e){
-            throw new CustomException(ExceptionCode.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
+        long total = jpaQueryFactory
+                .selectFrom(qContentEntity)
+                .where(
+                        qContentEntity.delYn.eq(BooleanFlag.N)
+                                .and(dynamicContentCategoryBuilder(categoryId, categoryIds))
+                )
+                .stream().count();
+        return new PageImpl<>(contentListDtoList, pageable, total);
     }
 
     public ContentEntity findContent(Long id) throws CustomException {
@@ -158,7 +153,7 @@ public class ContentDao {
                 .collect(Collectors.groupingBy(contentFileEntity -> contentFileEntity.getContent().getId()));
     }
 
-    public Map<Long, ContentFileEntity> findSingleContentFileByContentIds(List<Long> contentIds) throws CustomException {
+    public Map<Long, ContentFileEntity> findSingleContentFileByContentIds(List<Long> contentIds) {
         QContentFileEntity qContentFileEntity2 = new QContentFileEntity("qContentFileEntity2");
 
 //        List<ContentFileEntity> contentFileEntities = Optional.ofNullable(
@@ -176,7 +171,7 @@ public class ContentDao {
 //                )
 //                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "not found"));
 
-        List<ContentFileEntity> contentFileEntities = Optional.ofNullable(
+        List<ContentFileEntity> contentFileEntities =
                         jpaQueryFactory
                                 .selectFrom(qContentFileEntity)
                                 .leftJoin(qContentFileEntity.file, qFileEntity).fetchJoin()
@@ -188,9 +183,7 @@ public class ContentDao {
                                                 .groupBy(qContentFileEntity2.content.id))
                                 )
                                 .where(qFileEntity.originName.contains("image0"))
-                                .fetch()
-                )
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "not found"));
+                                .fetch();
 
 //        // 각 contentId에 대해 하나의 ContentFileEntity만 반환
         return contentFileEntities.stream()
@@ -236,10 +229,10 @@ public class ContentDao {
 //                ));
     }
 
-    public Map<Long, NoticeFileEntity> findSingleNoticeFileByNoticeIds(List<Long> noticeIds) throws CustomException {
+    public Map<Long, NoticeFileEntity> findSingleNoticeFileByNoticeIds(List<Long> noticeIds) {
         QNoticeFileEntity qNoticeFileEntity2 = new QNoticeFileEntity("qNoticeFileEntity2");
 
-        List<NoticeFileEntity> noticeFileEntityList = Optional.ofNullable(
+        List<NoticeFileEntity> noticeFileEntityList =
                         jpaQueryFactory
                                 .selectFrom(qNoticeFileEntity)
                                 .leftJoin(qNoticeFileEntity.file, qFileEntity).fetchJoin()
@@ -251,9 +244,7 @@ public class ContentDao {
                                                 .groupBy(qNoticeFileEntity2.notice.id))
                                 )
                                 .where(qFileEntity.originName.contains("image0"))
-                                .fetch()
-                )
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_EXIST, "not found"));
+                                .fetch();
 
         return noticeFileEntityList.stream()
                 .collect(Collectors.toMap(
@@ -318,7 +309,7 @@ public class ContentDao {
                         .fetch();
     }
 
-    private BooleanBuilder dynamicContentCategoryBuilder(Long categoryId, List<Long> categoryIds) throws Exception {
+    private BooleanBuilder dynamicContentCategoryBuilder(Long categoryId, List<Long> categoryIds) {
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
@@ -329,7 +320,7 @@ public class ContentDao {
         return booleanBuilder;
     }
 
-    public List<ContentModel.NoticeListDto> findNoticeList() throws Exception {
+    public List<ContentModel.NoticeListDto> findNoticeList() {
 
         List<ContentModel.NoticeListDto> noticeListDtoList = jpaQueryFactory
                 .select(

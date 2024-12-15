@@ -35,7 +35,7 @@ public class ContentController implements ContentControllerDocs {
 
     // 컨텐츠 리스트 조회 - page 적용
     @GetMapping("/list/{categoryId}")
-    public ApiResponseModel<Page<ContentModel.ContentListDto>> getContents(@PathVariable("categoryId") Long categoryId, Pageable pageable) throws CustomException {
+    public ApiResponseModel<Page<ContentModel.ContentListDto>> getContents(@PathVariable("categoryId") Long categoryId, Pageable pageable) {
         return new ApiResponseModel<>(contentReadService.findContents(categoryId, pageable));
     }
 
@@ -99,7 +99,7 @@ public class ContentController implements ContentControllerDocs {
 
     // 공지사항 리스트 조회
     @GetMapping("/list/notice")
-    public ApiResponseModel<List<ContentModel.NoticeListDto>> getNotices() throws Exception {
+    public ApiResponseModel<List<ContentModel.NoticeListDto>> getNotices() {
         return new ApiResponseModel<>(contentReadService.findNotices());
     }
 
