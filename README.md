@@ -4,7 +4,7 @@
 이 플랫폼은 백엔드 개발자들이 모여서 기술 관련 게시글을 작성하고, 토론을 하며, 서로의 경험을 공유할 수 있도록 만들어졌습니다. 
 사용자는 다양한 게시판을 통해 질문을 올리고 답변을 받으며, 인기 게시글을 통해 트렌드를 파악할 수 있습니다.
 
-~~ 👉 [커뮤니티 사이트 접속하기](https://d3lm2l0zcnsf11.cloudfront.net) ~~
+~~👉 [커뮤니티 사이트 접속하기](https://d3lm2l0zcnsf11.cloudfront.net)~~
 
 ## 2. 구성
 
@@ -93,7 +93,7 @@ archi-back/
 Swagger 문서
 API는 Swagger를 통해 문서화되어 있으며, 이를 통해 자세한 API 스펙을 확인할 수 있습니다.
 
-https://52.79.69.111.nip.io/swagger-ui/index.html
+~~https://52.79.69.111.nip.io/swagger-ui/index.html~~
 
 - **어드민 API**: `/api/v1/admin` - 관리자 전용 API (공지사항 및 카테고리 관련 기능)
 - **알림 API**: `/api/v1/notification` - SSE를 통한 실시간 알림 기능 제공
