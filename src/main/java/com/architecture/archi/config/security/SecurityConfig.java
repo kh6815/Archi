@@ -3,6 +3,7 @@ package com.architecture.archi.config.security;
 import com.architecture.archi.config.security.error.CustomAccessDeniedHandler;
 import com.architecture.archi.config.security.error.CustomAuthenticationEntryPoint;
 import com.architecture.archi.config.security.filter.JwtAuthFilter;
+import com.architecture.archi.config.security.filter.SessionFilter;
 import com.architecture.archi.config.security.user.CustomUserDetailsService;
 import com.architecture.archi.config.security.user.oauth2.CustomOauth2UserService;
 import com.architecture.archi.config.security.user.oauth2.OAuth2FailureHandler;
@@ -72,6 +73,8 @@ public class SecurityConfig  {
         //세션 관리 상태 없음으로 구성, Spring Security가 세션 생성 or 사용 X
         http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
                 SessionCreationPolicy.STATELESS));
+
+        http.addFilterBefore(new SessionFilter(), UsernamePasswordAuthenticationFilter.class);
 
         //FormLogin, BasicHttp 비활성화
         http.formLogin((form) -> form.disable());

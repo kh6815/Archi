@@ -53,7 +53,7 @@ dependencies {
 //	runtimeOnly("com.mysql:mysql-connector-j")
 
 	// Lombok
-	compileOnly 'org.projectlombok:lombok'
+	implementation 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
 	// flyway for migration
@@ -83,7 +83,7 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-ext.profile = (!project.hasProperty('profile') || !profile) ? 'dev' : profile
+ext.profile = (!project.hasProperty('profile') || !profile) ? 'local' : profile
 
 // [3] Querydsl 설정부
 def generated = 'src/main/generated'
@@ -120,4 +120,12 @@ tasks {
 	processResources {
 		duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
 	}
+}
+
+bootRun {
+	jvmArgs = [
+//			"-javaagent:./pinpoint-agent-2.5.4/pinpoint-bootstrap-2.5.4.jar",
+			"-Dpinpoint.applicationName=springboot-archi-back",
+			"-Dpinpoint.agentId=archi-back"
+	]
 }
